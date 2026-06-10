@@ -1,0 +1,88 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Hero from '../components/Hero.astro';
+import PlanCard from '../components/PlanCard.astro';
+import WhatsAppButton from '../components/WhatsAppButton.astro';
+import { prisma } from '../lib/prisma';
+
+const plans = await prisma.plan.findMany({ orderBy: { order: 'asc' } });
+---
+
+<Layout title="Planes y Precios | Asesorías Borotto" description="Conoce los planes de servicios contables de Asesorías Borotto. Desde declaración de impuestos hasta contabilidad completa y auditoría.">
+  <Header />
+  <main>
+    <Hero
+      title='Planes a <span class="accent">tu medida</span>'
+      subtitle="Elige el plan que mejor se adapte a tu negocio. Todos incluyen atención personalizada y asesoría directa."
+      compact={true}
+      ctaPrimary={{ text: 'Contactar', href: '/contacto' }}
+      ctaSecondary={{ text: 'Ver Servicios', href: '/servicios' }}
+    />
+
+    <section class="section">
+      <div class="container">
+        <div class="plans-grid">
+          {plans.map((plan, i) => (
+            <div class={`reveal delay-${i + 1}`}>
+              <PlanCard
+                name={plan.name}
+                price={plan.price}
+                description={plan.description}
+                features={plan.features}
+                highlighted={plan.highlighted}
+              />
+            </div>
+          ))}
+        </div>
+
+        <div class="custom-plan reveal">
+          <div class="card-glass" style="text-align: center; padding: var(--space-10);">
+            <h3>¿No encuentras lo que buscas?</h3>
+            <p style="margin: var(--space-4) auto; max-width: 500px;">Puedo crear un plan personalizado para las necesidades específicas de tu negocio. Conversemos.</p>
+            <a href="/contacto" class="btn btn-primary">Solicitar Plan Personalizado</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <Footer />
+  <WhatsAppButton />
+</Layout>
+
+<style>
+  .plans-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-6);
+    margin-bottom: var(--space-12);
+  }
+
+  .plans-grid > div {
+    flex: 1 1 calc(33.333% - var(--space-6));
+    max-width: calc(33.333% - var(--space-6));
+    min-width: 300px;
+    display: flex;
+  }
+
+  .plans-grid > div > :global(*) {
+    width: 100%;
+    height: 100%;
+  }
+
+  @media (max-width: 1024px) {
+    .plans-grid > div {
+      flex: 1 1 calc(50% - var(--space-6));
+      max-width: calc(50% - var(--space-6));
+    }
+  }
+
+  @media (max-width: 640px) {
+    .plans-grid > div {
+      flex: 1 1 100%;
+      max-width: 100%;
+    }
+  }
+</style>

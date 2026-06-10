@@ -1,0 +1,178 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { prisma } from '../../lib/prisma';
+
+const authCookie = Astro.cookies.get('admin_auth')?.value;
+if (authCookie !== (import.meta.env.ADMIN_PASSWORD || 'admin123')) {
+  return Astro.redirect('/admin');
+}
+
+const unreadMessages = await prisma.message.count({ where: { read: false } });
+const services = await prisma.service.findMany({ orderBy: { order: 'asc' } });
+
+const lucideIcons = ['file-text', 'calculator', 'users', 'rocket', 'shield-check', 'search', 'briefcase', 'bar-chart', 'clipboard', 'dollar-sign', 'folder', 'layers', 'settings', 'star', 'trending-up'];
+---
+
+<Layout title="Servicios | Admin">
+  <div class="admin-layout">
+    <aside class="admin-sidebar">
+      <div class="sidebar-logo"><svg viewBox="0 0 32 32" fill="none" width="32" height="32"><rect width="32" height="32" rx="8" fill="var(--color-accent)"/><path d="M8 24V8h4l4 10 4-10h4v16h-3V13l-3.5 9h-3L11 13v11H8z" fill="var(--color-primary)"/></svg><span>Admin</span></div>
+      <nav class="sidebar-nav">
+        <a href="/admin" class="sidebar-link">Dashboard</a>
+        <a href="/admin/planes" class="sidebar-link">Planes</a>
+        <a href="/admin/servicios" class="sidebar-link active">Servicios</a>
+        <a href="/admin/testimonios" class="sidebar-link">Testimonios</a>
+        <a href="/admin/mensajes" class="sidebar-link">Mensajes {unreadMessages > 0 && <span class="badge-count">{unreadMessages}</span>}</a>
+      </nav>
+      <div class="sidebar-footer"><a href="/" class="sidebar-link">Ver Sitio</a></div>
+    </aside>
+
+    <main class="admin-main">
+      <div class="admin-header">
+        <h1>Gestión de Servicios</h1>
+        <button class="btn btn-primary" id="add-btn">+ Agregar Servicio</button>
+      </div>
+
+      <div class="modal-overlay" id="modal" style="display:none;">
+        <div class="modal-card">
+          <h2 id="modal-title">Nuevo Servicio</h2>
+          <form id="service-form">
+            <input type="hidden" id="service-id" />
+            <div class="form-group">
+              <label class="form-label">Nombre</label>
+              <input type="text" id="service-name" class="form-input" required placeholder="Ej: Declaración de Impuestos" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Descripción</label>
+              <textarea id="service-desc" class="form-textarea" required placeholder="Descripción del servicio"></textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Precio (en UF)</label>
+              <input type="text" id="service-price" class="form-input" placeholder="Ej: Desde 1,5 UF, 2 UF o Gratis" />
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Icono</label>
+                <select id="service-icon" class="form-select">
+                  {lucideIcons.map(icon => <option value={icon}>{icon}</option>)}
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Orden</label>
+                <input type="number" id="service-order" class="form-input" value="0" />
+              </div>
+            </div>
+            <div class="modal-actions">
+              <button type="button" class="btn btn-secondary" id="cancel-btn">Cancelar</button>
+              <button type="submit" class="btn btn-primary">Guardar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="admin-table-wrapper">
+        <table class="admin-table">
+          <thead><tr><th>Orden</th><th>Nombre</th><th>Precio</th><th>Icono</th><th>Descripción</th><th>Acciones</th></tr></thead>
+          <tbody>
+            {services.map((s) => (
+              <tr>
+                <td>{s.order}</td>
+                <td><strong>{s.name}</strong></td>
+                <td><span class="price-badge">{s.price || 'Consultar'}</span></td>
+                <td><code>{s.icon}</code></td>
+                <td style="max-width:250px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{s.description}</td>
+                <td class="actions-cell">
+                  <button class="btn-sm btn-edit" data-item={JSON.stringify(s)}>Editar</button>
+                  <button class="btn-sm btn-delete" data-id={s.id}>Eliminar</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        {services.length === 0 && <p class="empty-msg">No hay servicios creados aún.</p>}
+      </div>
+    </main>
+  </div>
+</Layout>
+
+<script>
+  const modal = document.getElementById('modal')!;
+  const form = document.getElementById('service-form') as HTMLFormElement;
+  const modalTitle = document.getElementById('modal-title')!;
+  const authToken = document.cookie.split(';').find(c => c.trim().startsWith('admin_auth='))?.split('=')[1] || '';
+
+  document.getElementById('add-btn')!.addEventListener('click', () => { modalTitle.textContent = 'Nuevo Servicio'; form.reset(); (document.getElementById('service-id') as HTMLInputElement).value = ''; modal.style.display = 'flex'; });
+  document.getElementById('cancel-btn')!.addEventListener('click', () => { modal.style.display = 'none'; });
+
+  document.querySelectorAll('.btn-edit').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const item = JSON.parse((btn as HTMLElement).dataset.item!);
+      modalTitle.textContent = 'Editar Servicio';
+      (document.getElementById('service-id') as HTMLInputElement).value = item.id;
+      (document.getElementById('service-name') as HTMLInputElement).value = item.name;
+      (document.getElementById('service-desc') as HTMLTextAreaElement).value = item.description;
+      (document.getElementById('service-price') as HTMLInputElement).value = item.price || '';
+      (document.getElementById('service-icon') as HTMLSelectElement).value = item.icon;
+      (document.getElementById('service-order') as HTMLInputElement).value = item.order;
+      modal.style.display = 'flex';
+    });
+  });
+
+  document.querySelectorAll('.btn-delete').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const result = await Swal.fire({ title: '¿Eliminar este servicio?', text: 'Esta acción no se puede deshacer.', icon: 'warning', showCancelButton: true, confirmButtonColor: '#ef4444', cancelButtonColor: '#6b7280', confirmButtonText: 'Sí, eliminar', cancelButtonText: 'Cancelar' });
+      if (!result.isConfirmed) return;
+      const res = await fetch('/api/servicios', { method: 'DELETE', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` }, body: JSON.stringify({ id: Number((btn as HTMLElement).dataset.id) }) });
+      if (res.ok) { await Swal.fire({ title: '¡Eliminado!', text: 'Servicio eliminado correctamente.', icon: 'success', confirmButtonColor: '#c9a84c', timer: 1500, showConfirmButton: false }); }
+      else { await Swal.fire({ title: 'Error', text: 'No se pudo eliminar.', icon: 'error', confirmButtonColor: '#c9a84c' }); }
+      window.location.reload();
+    });
+  });
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const id = (document.getElementById('service-id') as HTMLInputElement).value;
+    const data = {
+      id: id ? Number(id) : undefined,
+      name: (document.getElementById('service-name') as HTMLInputElement).value,
+      description: (document.getElementById('service-desc') as HTMLTextAreaElement).value,
+      price: (document.getElementById('service-price') as HTMLInputElement).value || null,
+      icon: (document.getElementById('service-icon') as HTMLSelectElement).value,
+      order: Number((document.getElementById('service-order') as HTMLInputElement).value)
+    };
+    const res = await fetch('/api/servicios', { method: id ? 'PUT' : 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` }, body: JSON.stringify(data) });
+    if (res.ok) { await Swal.fire({ title: id ? '¡Actualizado!' : '¡Creado!', text: `Servicio ${id ? 'actualizado' : 'creado'} correctamente.`, icon: 'success', confirmButtonColor: '#c9a84c', timer: 1500, showConfirmButton: false }); }
+    else { await Swal.fire({ title: 'Error', text: 'Hubo un problema al guardar.', icon: 'error', confirmButtonColor: '#c9a84c' }); }
+    window.location.reload();
+  });
+</script>
+
+<style>
+  .admin-layout { display: flex; min-height: 100vh; }
+  .admin-sidebar { width: 250px; background: var(--color-primary); color: white; display: flex; flex-direction: column; padding: var(--space-6); position: fixed; top: 0; bottom: 0; left: 0; }
+  .sidebar-logo { display: flex; align-items: center; gap: var(--space-3); font-family: var(--font-heading); font-size: var(--text-xl); font-weight: 700; margin-bottom: var(--space-8); padding-bottom: var(--space-6); border-bottom: 1px solid rgba(255,255,255,0.1); }
+  .sidebar-nav { display: flex; flex-direction: column; gap: var(--space-1); flex: 1; }
+  .sidebar-link { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3) var(--space-4); color: rgba(255,255,255,0.7); font-size: var(--text-sm); font-weight: 500; border-radius: var(--radius-md); transition: all var(--transition-fast); text-decoration: none; }
+  .sidebar-link:hover, .sidebar-link.active { background: rgba(255,255,255,0.1); color: white; }
+  .sidebar-link.active { background: rgba(201,168,76,0.2); color: var(--color-accent); }
+  .badge-count { background: var(--color-error); color: white; font-size: 11px; padding: 1px 6px; border-radius: var(--radius-full); margin-left: auto; }
+  .sidebar-footer { border-top: 1px solid rgba(255,255,255,0.1); padding-top: var(--space-4); }
+  .admin-main { flex: 1; margin-left: 250px; padding: var(--space-8); background: var(--color-bg); }
+  .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-8); }
+  .admin-header h1 { font-size: var(--text-3xl); }
+  .admin-table-wrapper { background: var(--color-surface); border-radius: var(--radius-lg); border: 1px solid var(--color-border-light); overflow: hidden; }
+  .admin-table { width: 100%; border-collapse: collapse; }
+  .admin-table th { text-align: left; padding: var(--space-4); font-size: var(--text-sm); font-weight: 600; color: var(--color-text-muted); border-bottom: 1px solid var(--color-border-light); background: var(--color-bg-alt); }
+  .admin-table td { padding: var(--space-4); font-size: var(--text-sm); border-bottom: 1px solid var(--color-border-light); }
+  .actions-cell { display: flex; gap: var(--space-2); }
+  .btn-sm { padding: var(--space-1) var(--space-3); font-size: var(--text-xs); border: 1px solid var(--color-border); background: var(--color-surface); border-radius: var(--radius-sm); cursor: pointer; transition: all var(--transition-fast); }
+  .btn-sm:hover { background: var(--color-bg-alt); }
+  .btn-delete:hover { background: rgba(239,68,68,0.1); color: var(--color-error); border-color: var(--color-error); }
+  .empty-msg { text-align: center; padding: var(--space-10); color: var(--color-text-muted); }
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+  .modal-card { background: var(--color-surface); border-radius: var(--radius-xl); padding: var(--space-8); width: 100%; max-width: 550px; max-height: 90vh; overflow-y: auto; }
+  .modal-card h2 { font-size: var(--text-2xl); margin-bottom: var(--space-6); }
+  .modal-card form { display: flex; flex-direction: column; gap: var(--space-4); }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); }
+  .modal-actions { display: flex; gap: var(--space-3); justify-content: flex-end; margin-top: var(--space-4); }
+</style>

@@ -1,0 +1,170 @@
+---
+interface Props {
+  title: string;
+  subtitle: string;
+  ctaPrimary?: { text: string; href: string };
+  ctaSecondary?: { text: string; href: string };
+  compact?: boolean;
+}
+
+const {
+  title,
+  subtitle,
+  ctaPrimary = { text: 'Ver Planes', href: '/planes' },
+  ctaSecondary = { text: 'Contactar', href: '/contacto' },
+  compact = false,
+} = Astro.props;
+---
+
+<section class:list={['hero', { 'hero-compact': compact }]} id="hero">
+  <!-- Decorative shapes -->
+  <div class="hero-shapes" aria-hidden="true">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+    <div class="shape shape-4"></div>
+  </div>
+
+  <div class="container hero-container">
+    <div class="hero-content">
+      <h1 class="hero-title" set:html={title} />
+      <p class="hero-subtitle">{subtitle}</p>
+      <div class="hero-ctas">
+        <a href={ctaPrimary.href} class="btn btn-primary btn-lg">{ctaPrimary.text}</a>
+        <a href={ctaSecondary.href} class="btn btn-secondary btn-lg">{ctaSecondary.text}</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    min-height: 90vh;
+    display: flex;
+    align-items: center;
+    background: linear-gradient(135deg, var(--color-bg) 0%, var(--color-bg-alt) 50%, rgba(201, 168, 76, 0.05) 100%);
+    overflow: hidden;
+    padding-top: 80px;
+  }
+
+  .hero-compact {
+    min-height: 50vh;
+  }
+
+  /* Decorative shapes */
+  .hero-shapes {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .shape {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(60px);
+    opacity: 0.4;
+  }
+
+  .shape-1 {
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(201, 168, 76, 0.2), transparent 70%);
+    top: -100px;
+    right: -100px;
+    animation: float 8s ease-in-out infinite;
+  }
+
+  .shape-2 {
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(45, 74, 122, 0.15), transparent 70%);
+    bottom: -50px;
+    left: -50px;
+    animation: float 10s ease-in-out infinite 1s;
+  }
+
+  .shape-3 {
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(201, 168, 76, 0.12), transparent 70%);
+    top: 40%;
+    left: 60%;
+    animation: float 7s ease-in-out infinite 2s;
+  }
+
+  .shape-4 {
+    width: 150px;
+    height: 150px;
+    background: radial-gradient(circle, rgba(26, 39, 68, 0.08), transparent 70%);
+    bottom: 30%;
+    right: 10%;
+    animation: float 9s ease-in-out infinite 0.5s;
+  }
+
+  .hero-container {
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-content {
+    max-width: 750px;
+    margin-inline: auto;
+    text-align: center;
+    animation: fadeInUp 0.8s ease both;
+  }
+
+  .hero-title {
+    font-size: var(--text-6xl);
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: var(--space-6);
+    color: var(--color-primary);
+  }
+
+  .hero-title :global(.accent) {
+    background: linear-gradient(135deg, var(--color-accent), var(--color-accent-light));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-subtitle {
+    font-size: var(--text-xl);
+    color: var(--color-text-muted);
+    max-width: 600px;
+    margin-inline: auto;
+    margin-bottom: var(--space-10);
+    line-height: 1.7;
+  }
+
+  .hero-ctas {
+    display: flex;
+    gap: var(--space-4);
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: 768px) {
+    .hero {
+      min-height: 80vh;
+      padding-top: 100px;
+    }
+
+    .hero-compact {
+      min-height: 40vh;
+    }
+
+    .hero-title {
+      font-size: var(--text-4xl);
+    }
+
+    .hero-subtitle {
+      font-size: var(--text-base);
+    }
+
+    .shape-1, .shape-3 {
+      display: none;
+    }
+  }
+</style>

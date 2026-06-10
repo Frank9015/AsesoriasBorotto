@@ -1,0 +1,67 @@
+---
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { 
+  title, 
+  description = 'Servicios profesionales de contabilidad, auditoría y asesoría tributaria en Chile. Planes a tu medida para emprendedores y pymes.' 
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <meta name="author" content="Asesorías Borotto" />
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="es_CL" />
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    
+    <!-- SweetAlert2 -->
+    <script is:inline src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <!-- Estilos globales -->
+    <title>{title}</title>
+  </head>
+  <body>
+    <slot />
+
+    <!-- Intersection Observer para animaciones al scroll -->
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const revealElements = document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale');
+        
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                observer.unobserve(entry.target);
+              }
+            });
+          },
+          {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px',
+          }
+        );
+
+        revealElements.forEach((el) => observer.observe(el));
+      });
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  @import '../styles/global.css';
+</style>

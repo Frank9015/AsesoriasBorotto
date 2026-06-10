@@ -1,0 +1,183 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Hero from '../components/Hero.astro';
+import WhatsAppButton from '../components/WhatsAppButton.astro';
+---
+
+<Layout title="Sobre Mí | Asesorías Borotto" description="Conoce nuestra historia, formación y valores en Asesorías Borotto. Compromiso, transparencia y cercanía al servicio de tu negocio.">
+  <Header />
+  <main>
+    <Hero
+      title='Conoce a tu <span class="accent">contadora</span>'
+      subtitle="Compromiso, transparencia y cercanía al servicio de tu negocio."
+      compact={true}
+      ctaPrimary={{ text: 'Contactar', href: '/contacto' }}
+      ctaSecondary={{ text: 'Ver Servicios', href: '/servicios' }}
+    />
+
+    <!-- Bio -->
+    <section class="section">
+      <div class="container">
+        <div class="about-grid">
+          <div class="about-photo reveal-left">
+            <div class="photo-placeholder">
+              <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              <p>Foto profesional</p>
+            </div>
+          </div>
+          <div class="about-content reveal-right">
+            <span class="section-label">Mi Historia</span>
+            <h2>Pasión por la contabilidad al servicio de las personas</h2>
+            <p>Desde que comencé mi carrera en el área de la asesoría contable y tributaria, mi vocación ha sido clara: ayudar a emprendedores y pequeñas empresas a tener tranquilidad financiera.</p>
+            <p>Creo firmemente que la contabilidad no tiene que ser un dolor de cabeza. Mi enfoque es hacer que los números sean comprensibles, los procesos sean simples, y cada cliente se sienta acompañado en cada paso.</p>
+            <p>Con años de experiencia asesorando pymes en Chile, he aprendido que cada negocio es único y merece una atención personalizada. Esa es mi promesa: tratarte como persona, no como un número más.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Valores -->
+    <section class="section values-section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-label">Valores</span>
+          <h2>Lo que me define</h2>
+        </div>
+        <div class="values-grid">
+          <div class="card value-card reveal delay-1">
+            <div class="value-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            </div>
+            <h3>Cercanía</h3>
+            <p>Atención personalizada. Estoy disponible para resolver tus dudas y acompañarte en cada proceso.</p>
+          </div>
+          <div class="card value-card reveal delay-2">
+            <div class="value-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </div>
+            <h3>Transparencia</h3>
+            <p>Cada proceso es claro y honesto. Priorizo la transparencia para ofrecerte un servicio de calidad.</p>
+          </div>
+          <div class="card value-card reveal delay-3">
+            <div class="value-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <h3>Confianza</h3>
+            <p>Tu información está segura conmigo. Trabajo con ética y compromiso genuino con tus resultados.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Misión y Visión -->
+    <section class="section">
+      <div class="container">
+        <div class="mission-grid">
+          <div class="card-glass mission-card reveal delay-1">
+            <span class="section-label">Misión</span>
+            <h3>Apoyar tu crecimiento</h3>
+            <p>Entregar un servicio contable especializado y de calidad a emprendedores y pymes, acercando la contabilidad a las personas con empatía y profesionalismo.</p>
+          </div>
+          <div class="card-glass mission-card reveal delay-2">
+            <span class="section-label">Visión</span>
+            <h3>Ser tu aliada financiera</h3>
+            <p>Ser reconocida como una profesional de confianza en servicios contables y tributarios, destacando por la cercanía, transparencia y compromiso con cada cliente.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <Footer />
+  <WhatsAppButton />
+</Layout>
+
+<style>
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: var(--space-12);
+    align-items: center;
+  }
+
+  .photo-placeholder {
+    width: 100%;
+    aspect-ratio: 3/4;
+    background: linear-gradient(135deg, var(--color-bg-alt), var(--color-border-light));
+    border-radius: var(--radius-xl);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text-muted);
+    border: 2px dashed var(--color-border);
+  }
+
+  .photo-placeholder p {
+    margin-top: var(--space-2);
+    font-size: var(--text-sm);
+  }
+
+  .about-content p {
+    margin-bottom: var(--space-4);
+    font-size: var(--text-base);
+  }
+
+  .values-section {
+    background: var(--color-bg-alt);
+  }
+
+  .values-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-6);
+  }
+
+  .value-card {
+    text-align: center;
+  }
+
+  .value-icon {
+    width: 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, rgba(201, 168, 76, 0.1), rgba(201, 168, 76, 0.05));
+    color: var(--color-accent);
+    border-radius: 50%;
+    margin: 0 auto var(--space-4);
+  }
+
+  .value-card h3 {
+    margin-bottom: var(--space-2);
+  }
+
+  .mission-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-6);
+  }
+
+  .mission-card {
+    text-align: center;
+    padding: var(--space-10);
+  }
+
+  .mission-card h3 {
+    margin-bottom: var(--space-4);
+  }
+
+  @media (max-width: 768px) {
+    .about-grid {
+      grid-template-columns: 1fr;
+      gap: var(--space-8);
+    }
+
+    .values-grid,
+    .mission-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

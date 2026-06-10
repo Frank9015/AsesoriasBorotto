@@ -1,0 +1,147 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Hero from '../components/Hero.astro';
+import WhatsAppButton from '../components/WhatsAppButton.astro';
+import { prisma } from '../lib/prisma';
+
+const testimonials = await prisma.testimonial.findMany({ where: { visible: true }, orderBy: { createdAt: 'desc' } });
+---
+
+<Layout title="Testimonios | Asesorías Borotto" description="Conoce las opiniones de nuestros clientes sobre las asesorías contables y tributarias de Asesorías Borotto.">
+  <Header />
+  <main>
+    <Hero
+      title='Lo que dicen mis <span class="accent">clientes</span>'
+      subtitle="La confianza de mis clientes es mi mayor orgullo. Conoce sus experiencias."
+      compact={true}
+      ctaPrimary={{ text: 'Contactar', href: '/contacto' }}
+      ctaSecondary={{ text: 'Ver Planes', href: '/planes' }}
+    />
+
+    <section class="section">
+      <div class="container">
+        {testimonials.length > 0 ? (
+          <div class="testimonials-page-grid">
+            {testimonials.map((t, i) => (
+              <div class={`card testimonial-page-card reveal delay-${Math.min(i + 1, 6)}`}>
+                <div class="t-quote">"</div>
+                <p class="t-text">{t.text}</p>
+                <div class="t-author">
+                  <div class="t-avatar">{t.name.charAt(0)}</div>
+                  <div>
+                    <strong>{t.name}</strong>
+                    {t.role && t.company && <span>{t.role} — {t.company}</span>}
+                  </div>
+                </div>
+                <div class="t-stars">
+                  {Array.from({ length: t.rating }).map(() => (
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="var(--color-accent)" stroke="var(--color-accent)" stroke-width="1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div class="empty-state reveal">
+            <h3>Pronto compartiremos testimonios</h3>
+            <p>Estamos recopilando las experiencias de nuestros clientes.</p>
+          </div>
+        )}
+
+        <div class="cta-section reveal" style="margin-top: var(--space-16);">
+          <div class="card-glass" style="text-align: center; padding: var(--space-10);">
+            <h3>¿Quieres ser el próximo caso de éxito?</h3>
+            <p style="margin: var(--space-4) auto; max-width: 500px;">Contáctame y descubre cómo puedo ayudar a tu negocio.</p>
+            <a href="/contacto" class="btn btn-primary btn-lg">Agendar Consulta Gratis</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <Footer />
+  <WhatsAppButton />
+</Layout>
+
+<style>
+  .testimonials-page-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-6);
+  }
+
+  .testimonial-page-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .t-quote {
+    font-family: var(--font-heading);
+    font-size: 4rem;
+    line-height: 1;
+    color: var(--color-accent);
+    opacity: 0.3;
+    position: absolute;
+    top: var(--space-4);
+    left: var(--space-6);
+  }
+
+  .t-text {
+    font-size: var(--text-base);
+    color: var(--color-text);
+    font-style: italic;
+    line-height: 1.7;
+    margin-bottom: var(--space-6);
+    padding-top: var(--space-6);
+  }
+
+  .t-author {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-top: auto;
+  }
+
+  .t-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: var(--text-lg);
+  }
+
+  .t-author strong {
+    display: block;
+    font-size: var(--text-sm);
+    color: var(--color-text);
+  }
+
+  .t-author span {
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+  }
+
+  .t-stars {
+    display: flex;
+    gap: 2px;
+    margin-top: var(--space-3);
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: var(--space-16);
+    color: var(--color-text-muted);
+  }
+
+  @media (max-width: 640px) {
+    .testimonials-page-grid { grid-template-columns: 1fr; }
+  }
+</style>
