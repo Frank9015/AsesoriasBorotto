@@ -42,26 +42,26 @@ const navLinks = [
       </button>
     </nav>
   </div>
-
-  <!-- Mobile menu overlay -->
-  <div class="mobile-menu" id="mobile-menu">
-    <ul class="mobile-nav-links">
-      {navLinks.map((link) => (
-        <li>
-          <a
-            href={link.href}
-            class:list={['mobile-nav-link', { active: currentPath === link.href }]}
-          >
-            {link.label}
-          </a>
-        </li>
-      ))}
-    </ul>
-    <a href="/contacto" class="btn btn-primary btn-lg w-full" style="margin-top: var(--space-6); text-align: center;">
-      Consulta Gratis
-    </a>
-  </div>
 </header>
+
+<!-- Mobile menu overlay -->
+<div class="mobile-menu" id="mobile-menu">
+  <ul class="mobile-nav-links">
+    {navLinks.map((link) => (
+      <li>
+        <a
+          href={link.href}
+          class:list={['mobile-nav-link', { active: currentPath === link.href }]}
+        >
+          {link.label}
+        </a>
+      </li>
+    ))}
+  </ul>
+  <a href="/contacto" class="btn btn-primary btn-lg w-full" style="margin-top: var(--space-6); text-align: center;">
+    Consulta Gratis
+  </a>
+</div>
 
 <script>
   const header = document.getElementById('main-header')!;
