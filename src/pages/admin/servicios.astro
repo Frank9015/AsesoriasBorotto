@@ -47,6 +47,10 @@ const lucideIcons = ['file-text', 'calculator', 'users', 'rocket', 'shield-check
               <textarea id="service-desc" class="form-textarea" required placeholder="Descripción del servicio"></textarea>
             </div>
             <div class="form-group">
+              <label class="form-label">Características (una por línea)</label>
+              <textarea id="service-features" class="form-textarea" placeholder="Beneficio 1&#10;Beneficio 2"></textarea>
+            </div>
+            <div class="form-group">
               <label class="form-label">Precio (en UF)</label>
               <input type="text" id="service-price" class="form-input" placeholder="Ej: Desde 1,5 UF, 2 UF o Gratis" />
             </div>
@@ -72,7 +76,7 @@ const lucideIcons = ['file-text', 'calculator', 'users', 'rocket', 'shield-check
 
       <div class="admin-table-wrapper">
         <table class="admin-table">
-          <thead><tr><th>Orden</th><th>Nombre</th><th>Precio</th><th>Icono</th><th>Descripción</th><th>Acciones</th></tr></thead>
+          <thead><tr><th>Orden</th><th>Nombre</th><th>Precio</th><th>Icono</th><th>Descripción</th><th>Características</th><th>Acciones</th></tr></thead>
           <tbody>
             {services.map((s) => (
               <tr>
@@ -81,6 +85,7 @@ const lucideIcons = ['file-text', 'calculator', 'users', 'rocket', 'shield-check
                 <td><span class="price-badge">{s.price || 'Consultar'}</span></td>
                 <td><code>{s.icon}</code></td>
                 <td style="max-width:250px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{s.description}</td>
+                <td>{s.features?.length || 0} ítems</td>
                 <td class="actions-cell">
                   <button class="btn-sm btn-edit" data-item={JSON.stringify(s)}>Editar</button>
                   <button class="btn-sm btn-delete" data-id={s.id}>Eliminar</button>
@@ -101,7 +106,7 @@ const lucideIcons = ['file-text', 'calculator', 'users', 'rocket', 'shield-check
   const modalTitle = document.getElementById('modal-title')!;
   const authToken = document.cookie.split(';').find(c => c.trim().startsWith('admin_auth='))?.split('=')[1] || '';
 
-  document.getElementById('add-btn')!.addEventListener('click', () => { modalTitle.textContent = 'Nuevo Servicio'; form.reset(); (document.getElementById('service-id') as HTMLInputElement).value = ''; modal.style.display = 'flex'; });
+  document.getElementById('add-btn')!.addEventListener('click', () => { modalTitle.textContent = 'Nuevo Servicio'; form.reset(); (document.getElementById('service-id') as HTMLInputElement).value = ''; (document.getElementById('service-features') as HTMLTextAreaElement).value = ''; modal.style.display = 'flex'; });
   document.getElementById('cancel-btn')!.addEventListener('click', () => { modal.style.display = 'none'; });
 
   document.querySelectorAll('.btn-edit').forEach(btn => {
@@ -111,6 +116,7 @@ const lucideIcons = ['file-text', 'calculator', 'users', 'rocket', 'shield-check
       (document.getElementById('service-id') as HTMLInputElement).value = item.id;
       (document.getElementById('service-name') as HTMLInputElement).value = item.name;
       (document.getElementById('service-desc') as HTMLTextAreaElement).value = item.description;
+      (document.getElementById('service-features') as HTMLTextAreaElement).value = item.features ? item.features.join('\n') : '';
       (document.getElementById('service-price') as HTMLInputElement).value = item.price || '';
       (document.getElementById('service-icon') as HTMLSelectElement).value = item.icon;
       (document.getElementById('service-order') as HTMLInputElement).value = item.order;
@@ -136,6 +142,7 @@ const lucideIcons = ['file-text', 'calculator', 'users', 'rocket', 'shield-check
       id: id ? Number(id) : undefined,
       name: (document.getElementById('service-name') as HTMLInputElement).value,
       description: (document.getElementById('service-desc') as HTMLTextAreaElement).value,
+      features: (document.getElementById('service-features') as HTMLTextAreaElement).value.split('\n').filter(f => f.trim() !== ''),
       price: (document.getElementById('service-price') as HTMLInputElement).value || null,
       icon: (document.getElementById('service-icon') as HTMLSelectElement).value,
       order: Number((document.getElementById('service-order') as HTMLInputElement).value)

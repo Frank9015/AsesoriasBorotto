@@ -10,7 +10,7 @@ import { prisma } from '../lib/prisma';
 const plans = await prisma.plan.findMany({ orderBy: { order: 'asc' } });
 ---
 
-<Layout title="Planes y Precios | Asesorías Borotto" description="Conoce los planes de servicios contables de Asesorías Borotto. Desde declaración de impuestos hasta contabilidad completa y auditoría.">
+<Layout title="Planes y Precios | Asesorías Borotto" description="Conoce los planes de servicios contables de Asesorías Borotto. Desde declaración de impuestos hasta contabilidad completa y asesoría directa.">
   <Header />
   <main>
     <Hero
@@ -23,6 +23,17 @@ const plans = await prisma.plan.findMany({ orderBy: { order: 'asc' } });
 
     <section class="section">
       <div class="container">
+        
+        <!-- Cabecera de la sección inspirada en la referencia -->
+        <div class="section-header-custom reveal">
+          <span class="section-label">Acerca de nuestros</span>
+          <h2>Planes de Servicios Contables</h2>
+          <div class="header-description">
+            <p>Queremos que tengas un contador cuando de verdad lo necesites. Es por eso que, nuestros planes están enfocados en la realidad de tu negocio, tiempo y horario, con la calidad y profesionalismo que nos caracteriza desde siempre.</p>
+            <p>Diseñamos planes a tu medida, con la férrea convicción de que seremos el impulso que nuestros emprendedores necesitan para alcanzar el éxito.</p>
+          </div>
+        </div>
+
         <div class="plans-grid">
           {plans.map((plan, i) => (
             <div class={`reveal delay-${i + 1}`}>
@@ -37,7 +48,7 @@ const plans = await prisma.plan.findMany({ orderBy: { order: 'asc' } });
           ))}
         </div>
 
-        <div class="custom-plan reveal">
+        <div class="custom-plan reveal" style="margin-top: var(--space-16);">
           <div class="card-glass" style="text-align: center; padding: var(--space-10);">
             <h3>¿No encuentras lo que buscas?</h3>
             <p style="margin: var(--space-4) auto; max-width: 500px;">Puedo crear un plan personalizado para las necesidades específicas de tu negocio. Conversemos.</p>
@@ -52,6 +63,32 @@ const plans = await prisma.plan.findMany({ orderBy: { order: 'asc' } });
 </Layout>
 
 <style>
+  /* Cabecera de la sección de planes */
+  .section-header-custom {
+    text-align: center;
+    max-width: 800px;
+    margin-inline: auto;
+    margin-bottom: var(--space-16);
+  }
+
+  .section-header-custom h2 {
+    font-size: var(--text-4xl);
+    color: var(--color-primary);
+    margin-bottom: var(--space-6);
+  }
+
+  .header-description {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .header-description p {
+    font-size: var(--text-base);
+    color: var(--color-text-muted);
+    line-height: 1.7;
+  }
+
   .plans-grid {
     display: flex;
     flex-wrap: wrap;
@@ -63,7 +100,7 @@ const plans = await prisma.plan.findMany({ orderBy: { order: 'asc' } });
   .plans-grid > div {
     flex: 1 1 calc(33.333% - var(--space-6));
     max-width: calc(33.333% - var(--space-6));
-    min-width: 300px;
+    min-width: 310px;
     display: flex;
   }
 
@@ -84,5 +121,10 @@ const plans = await prisma.plan.findMany({ orderBy: { order: 'asc' } });
       flex: 1 1 100%;
       max-width: 100%;
     }
+
+    .section-header-custom h2 {
+      font-size: var(--text-3xl);
+    }
   }
 </style>
+

@@ -26,6 +26,7 @@ export const POST: APIRoute = async ({ request }) => {
       name: data.name,
       description: data.description,
       icon: data.icon || 'file-text',
+      features: data.features || [],
       price: data.price || null,
       order: data.order || 0,
     }});
@@ -47,6 +48,7 @@ export const PUT: APIRoute = async ({ request }) => {
         name: data.name,
         description: data.description,
         icon: data.icon,
+        features: data.features || [],
         price: data.price || null,
         order: data.order,
       },

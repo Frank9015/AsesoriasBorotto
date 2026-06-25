@@ -24,6 +24,7 @@ model Service {
   name        String
   description String
   icon        String
+  features    String[] @default([])
   price       String?
   order       Int      @default(0)
   createdAt   DateTime @default(now())
