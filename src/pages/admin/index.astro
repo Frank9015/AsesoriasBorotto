@@ -4,10 +4,10 @@ import { prisma } from '../../lib/prisma';
 
 // Auth check básica via cookie
 const authCookie = Astro.cookies.get('admin_auth')?.value;
-if (authCookie !== (import.meta.env.ADMIN_PASSWORD || 'admin123')) {
+if (authCookie !== (import.meta.env.ADMIN_PASSWORD || 'Borotto#2026')) {
   // Si no está autenticado, mostrar login
 }
-const isAuthenticated = authCookie === (import.meta.env.ADMIN_PASSWORD || 'admin123');
+const isAuthenticated = authCookie === (import.meta.env.ADMIN_PASSWORD || 'Borotto#2026');
 
 const totalPlans = await prisma.plan.count();
 const totalServices = await prisma.service.count();

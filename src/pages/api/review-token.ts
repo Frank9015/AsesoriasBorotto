@@ -5,7 +5,7 @@ export const POST: APIRoute = async ({ request, cookies }) => {
   try {
     // 1. Verificación de Autenticación de Admin
     const authCookie = cookies.get('admin_auth')?.value;
-    const adminPassword = import.meta.env.ADMIN_PASSWORD || 'admin123';
+    const adminPassword = import.meta.env.ADMIN_PASSWORD || 'Borotto#2026';
     
     if (authCookie !== adminPassword) {
       return new Response(
