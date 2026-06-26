@@ -28,7 +28,10 @@ const testimonials = await prisma.testimonial.findMany({ orderBy: { createdAt: '
     <main class="admin-main">
       <div class="admin-header">
         <h1>Gestión de Testimonios</h1>
-        <button class="btn btn-primary" id="add-btn">+ Agregar Testimonio</button>
+        <div style="display: flex; gap: 1rem;">
+          <button class="btn btn-secondary" id="generate-link-btn" style="border-color: var(--color-accent); color: var(--color-accent);">Generar Link para Cliente</button>
+          <button class="btn btn-primary" id="add-btn">+ Agregar Testimonio</button>
+        </div>
       </div>
 
       <div class="modal-overlay" id="modal" style="display:none;">
@@ -142,6 +145,34 @@ const testimonials = await prisma.testimonial.findMany({ orderBy: { createdAt: '
     if (res.ok) { await Swal.fire({ title: id ? '¡Actualizado!' : '¡Creado!', text: `Testimonio ${id ? 'actualizado' : 'creado'} correctamente.`, icon: 'success', confirmButtonColor: '#c9a84c', timer: 1500, showConfirmButton: false }); }
     else { await Swal.fire({ title: 'Error', text: 'Hubo un problema al guardar.', icon: 'error', confirmButtonColor: '#c9a84c' }); }
     window.location.reload();
+  });
+
+  document.getElementById('generate-link-btn')?.addEventListener('click', async () => {
+    try {
+      const res = await fetch('/api/review-token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`
+        }
+      });
+      const data = await res.json();
+      
+      if (res.ok && data.link) {
+        await navigator.clipboard.writeText(data.link);
+        Swal.fire({
+          title: '¡Link Generado!',
+          text: 'El link ha sido copiado al portapapeles. Puedes enviarlo a tu cliente. Éste link servirá para una sola reseña.',
+          icon: 'success',
+          confirmButtonColor: '#c9a84c'
+        });
+      } else {
+        Swal.fire({ title: 'Error', text: data.error || 'No se pudo generar el link.', icon: 'error', confirmButtonColor: '#c9a84c' });
+      }
+    } catch (error) {
+      console.error(error);
+      Swal.fire({ title: 'Error', text: 'Error de conexión al generar el link.', icon: 'error', confirmButtonColor: '#c9a84c' });
+    }
   });
 </script>
 

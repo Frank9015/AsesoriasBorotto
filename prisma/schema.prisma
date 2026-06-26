@@ -53,3 +53,9 @@ model Message {
   read      Boolean  @default(false)
   createdAt DateTime @default(now())
 }
+
+model ReviewToken {
+  id        String   @id @default(uuid())
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
