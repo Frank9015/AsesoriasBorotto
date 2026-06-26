@@ -71,7 +71,7 @@ graph TD
 │       ├── contacto.astro     # Formulario de contacto con alertas SweetAlert2
 │       ├── resena.astro       # [NUEVO] Página pública para dejar reseñas vía token
 │       ├── admin/             # Panel privado de gestión
-│       │   ├── index.astro        # Control de acceso administrativo (Password por defecto: Borotto#2026)
+│       │   ├── index.astro        # Control de acceso administrativo (Password por defecto: admin123)
 │       │   ├── planes.astro       # CRUD de Planes mensuales en UF
 │       │   ├── servicios.astro    # CRUD de Servicios con asignación de precios y selector de iconos
 │       │   ├── testimonios.astro  # CRUD de Testimonios y Generador de Links Únicos
@@ -100,7 +100,6 @@ graph TD
 *   [x] Carga de textos definitivos y fotografías oficiales.
 *   [x] Despliegue en hosting cloud (Vercel) e integración con base de datos de producción remota.
 *   [x] Automatización de `prisma db push` en Vercel durante la etapa de construcción (Build).
-*   [x] Mejora de seguridad: Cambio de contraseña genérica a `Borotto#2026`.
 *   [ ] Configuración de dominio oficial `asesoriasborotto.cl` en NIC Chile y DNS correspondientes.
 *   [ ] Integración de credenciales SMTP de producción para notificaciones reales por email.
 *   [ ] SEO final, optimización de assets (WebP) y auditoría Lighthouse.
@@ -118,7 +117,7 @@ npm install
 Crea un archivo `.env` en la raíz con lo siguiente:
 ```env
 DATABASE_URL="postgresql://postgres:postgres@localhost:5432/contadora_sitio"
-ADMIN_PASSWORD="Borotto#2026"
+ADMIN_PASSWORD="admin123"
 
 # Opcional - SMTP para notificaciones por correo en producción
 SMTP_HOST=""
@@ -142,4 +141,4 @@ npx prisma db seed
 npm run dev
 ```
 La aplicación correrá en **`http://localhost:4321/`**
-Accede al panel administrativo en **`/admin`** (Clave: `Borotto#2026`).
+Accede al panel administrativo en **`/admin`** (Clave: `admin123`).

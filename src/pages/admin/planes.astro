@@ -3,7 +3,7 @@ import Layout from '../../layouts/Layout.astro';
 import { prisma } from '../../lib/prisma';
 
 const authCookie = Astro.cookies.get('admin_auth')?.value;
-if (authCookie !== (import.meta.env.ADMIN_PASSWORD || 'Borotto#2026')) {
+if (authCookie !== (import.meta.env.ADMIN_PASSWORD || 'admin123')) {
   return Astro.redirect('/admin');
 }
 

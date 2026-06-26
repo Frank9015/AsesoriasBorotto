@@ -6,7 +6,7 @@ function isAuthorized(request: Request): boolean {
   const authHeader = request.headers.get('authorization');
   if (!authHeader) return false;
   const password = authHeader.replace('Bearer ', '');
-  return password === (import.meta.env.ADMIN_PASSWORD || 'Borotto#2026');
+  return password === (import.meta.env.ADMIN_PASSWORD || 'admin123');
 }
 
 export const GET: APIRoute = async () => {
