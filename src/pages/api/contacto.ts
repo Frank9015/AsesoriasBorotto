@@ -52,6 +52,7 @@ export const POST: APIRoute = async ({ request }) => {
         'auditoria': 'Auditoría Financiera',
         'otro': 'Otro'
       };
+      const displayService = serviceLabels[service || ''] || service || 'General';
       const escapeHtml = (str: string) => String(str || '').replace(/[&<>"']/g, (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m] || m));
 
       const safeName = escapeHtml(name);
