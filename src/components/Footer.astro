@@ -80,6 +80,9 @@ const navLinks = [
 
       <div class="footer-bottom">
         <p>&copy; {year} Asesorías Borotto. Todos los derechos reservados.</p>
+        <p class="developer-credit">
+          Desarrollado independientemente por <a href="https://www.linkedin.com/in/francoborottovidal/" target="_blank" rel="noopener noreferrer">Franco Borotto Vidal</a>
+        </p>
       </div>
     </div>
   </div>
@@ -199,6 +202,24 @@ const navLinks = [
   .footer-bottom p {
     font-size: var(--text-xs);
     color: rgba(255, 255, 255, 0.4);
+  }
+
+  .developer-credit {
+    margin-top: var(--space-2);
+    font-size: var(--text-xs);
+    color: rgba(255, 255, 255, 0.4);
+  }
+
+  .developer-credit a {
+    color: var(--color-accent);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color var(--transition-fast);
+  }
+
+  .developer-credit a:hover {
+    color: var(--color-accent-light);
+    text-decoration: underline;
   }
 
   @media (max-width: 1024px) {
