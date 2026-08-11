@@ -1,0 +1,228 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { prisma } from '../lib/prisma';
+
+const token = Astro.url.searchParams.get('token');
+let isValid = false;
+let errorMsg = '';
+
+if (!token) {
+  errorMsg = 'No se proporcionó un link de reseña.';
+} else {
+  try {
+    const reviewToken = await prisma.reviewToken.findUnique({
+      where: { id: token }
+    });
+
+    if (!reviewToken) {
+      errorMsg = 'El link de reseña es inválido o no existe.';
+    } else if (reviewToken.used) {
+      errorMsg = 'Este link de reseña ya ha sido utilizado. Cada link es válido para una sola reseña.';
+    } else {
+      isValid = true;
+    }
+  } catch (e) {
+    errorMsg = 'Error al verificar el link. Por favor, inténtalo más tarde.';
+  }
+}
+---
+
+<Layout title="Dejar Reseña | Asesorías Borotto">
+  <Header />
+
+  <main style="padding-top: 120px; padding-bottom: 80px; min-height: 70vh;">
+    <div class="container">
+      <div class="review-wrapper">
+        <div class="section-header">
+          <span class="section-label">Feedback</span>
+          <h2>Dejar una Reseña</h2>
+          <p>Tu opinión es fundamental para seguir mejorando mis servicios.</p>
+        </div>
+
+        {isValid ? (
+          <div class="card-glass review-card reveal">
+            <form id="review-form">
+              <input type="hidden" id="token" value={token} />
+              
+              <div class="form-group mb-4">
+                <label class="form-label">Nombre *</label>
+                <input type="text" id="name" class="form-input" required placeholder="Ej: Juan Pérez" />
+              </div>
+              
+              <div class="form-row mb-4">
+                <div class="form-group">
+                  <label class="form-label">Empresa (Opcional)</label>
+                  <input type="text" id="company" class="form-input" placeholder="Ej: Mi Pyme SpA" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Cargo (Opcional)</label>
+                  <input type="text" id="role" class="form-input" placeholder="Ej: Dueño" />
+                </div>
+              </div>
+              
+              <div class="form-group mb-4">
+                <label class="form-label">Testimonio *</label>
+                <textarea id="text" class="form-textarea" required placeholder="Cuéntanos tu experiencia trabajando con nosotros..."></textarea>
+              </div>
+              
+              <div class="form-group mb-8 text-center">
+                <label class="form-label" style="display:block; margin-bottom: 10px;">Calificación *</label>
+                <div class="star-rating">
+                  <input type="radio" id="star5" name="rating" value="5" checked />
+                  <label for="star5" title="5 estrellas">★</label>
+                  <input type="radio" id="star4" name="rating" value="4" />
+                  <label for="star4" title="4 estrellas">★</label>
+                  <input type="radio" id="star3" name="rating" value="3" />
+                  <label for="star3" title="3 estrellas">★</label>
+                  <input type="radio" id="star2" name="rating" value="2" />
+                  <label for="star2" title="2 estrellas">★</label>
+                  <input type="radio" id="star1" name="rating" value="1" />
+                  <label for="star1" title="1 estrella">★</label>
+                </div>
+              </div>
+
+              <button type="submit" class="btn btn-primary btn-lg w-full">Enviar Reseña</button>
+            </form>
+          </div>
+        ) : (
+          <div class="card error-card reveal text-center">
+            <div style="font-size: 3rem; margin-bottom: var(--space-4);">⚠️</div>
+            <h3>Link Inválido</h3>
+            <p>{errorMsg}</p>
+            <a href="/" class="btn btn-secondary mt-8">Volver al Inicio</a>
+          </div>
+        )}
+      </div>
+    </div>
+  </main>
+  
+  <Footer />
+</Layout>
+
+<script>
+  const form = document.getElementById('review-form') as HTMLFormElement;
+  if (form) {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const token = (document.getElementById('token') as HTMLInputElement).value;
+      const name = (document.getElementById('name') as HTMLInputElement).value;
+      const company = (document.getElementById('company') as HTMLInputElement).value;
+      const role = (document.getElementById('role') as HTMLInputElement).value;
+      const text = (document.getElementById('text') as HTMLTextAreaElement).value;
+      
+      let rating = 5;
+      const ratingInput = document.querySelector('input[name="rating"]:checked') as HTMLInputElement;
+      if (ratingInput) rating = parseInt(ratingInput.value);
+
+      const submitBtn = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Enviando...';
+
+      try {
+        const res = await fetch('/api/submit-review', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token, name, company, role, text, rating })
+        });
+        
+        const data = await res.json();
+        
+        if (res.ok) {
+          // @ts-ignore
+          await Swal.fire({
+            title: '¡Muchas Gracias!',
+            text: 'Tu reseña ha sido guardada y publicada. ¡Aprecio mucho tu tiempo!',
+            icon: 'success',
+            confirmButtonColor: '#c9a84c'
+          });
+          window.location.href = '/';
+        } else {
+          // @ts-ignore
+          Swal.fire({
+            title: 'Error',
+            text: data.error || 'Hubo un problema al enviar tu reseña.',
+            icon: 'error',
+            confirmButtonColor: '#c9a84c'
+          });
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Enviar Reseña';
+        }
+      } catch (error) {
+        // @ts-ignore
+        Swal.fire({
+          title: 'Error',
+          text: 'Error de conexión. Inténtalo más tarde.',
+          icon: 'error',
+          confirmButtonColor: '#c9a84c'
+        });
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Enviar Reseña';
+      }
+    });
+  }
+</script>
+
+<style>
+  .review-wrapper {
+    max-width: 700px;
+    margin: 0 auto;
+  }
+  
+  .review-card {
+    padding: var(--space-10);
+    box-shadow: var(--shadow-xl);
+  }
+
+  .error-card {
+    padding: var(--space-12) var(--space-8);
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-4);
+  }
+
+  /* Star Rating Styles (Reverse direction for sibling selectors) */
+  .star-rating {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: center;
+    gap: 8px;
+  }
+  
+  .star-rating input {
+    display: none;
+  }
+  
+  .star-rating label {
+    font-size: 2.5rem;
+    color: var(--color-border);
+    cursor: pointer;
+    transition: color 0.2s;
+    line-height: 1;
+  }
+  
+  /* Hover effects */
+  .star-rating label:hover,
+  .star-rating label:hover ~ label {
+    color: var(--color-accent-light);
+  }
+  
+  /* Selected effects */
+  .star-rating input:checked ~ label {
+    color: var(--color-accent);
+  }
+
+  @media (max-width: 640px) {
+    .form-row {
+      grid-template-columns: 1fr;
+    }
+    .review-card {
+      padding: var(--space-6);
+    }
+  }
+</style>
