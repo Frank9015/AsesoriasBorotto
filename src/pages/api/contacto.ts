@@ -186,3 +186,37 @@ export const PUT: APIRoute = async ({ request }) => {
     );
   }
 };
+
+export const DELETE: APIRoute = async ({ request }) => {
+  if (!isAuthorized(request)) {
+    return new Response(
+      JSON.stringify({ error: 'No autorizado' }),
+      { status: 401, headers: { 'Content-Type': 'application/json' } }
+    );
+  }
+  try {
+    const { id } = await request.json();
+
+    if (!id) {
+      return new Response(
+        JSON.stringify({ error: 'ID es obligatorio.' }),
+        { status: 400, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+
+    await prisma.message.delete({
+      where: { id: Number(id) },
+    });
+
+    return new Response(
+      JSON.stringify({ success: true }),
+      { status: 200, headers: { 'Content-Type': 'application/json' } }
+    );
+  } catch (error) {
+    console.error('Error al eliminar mensaje:', error);
+    return new Response(
+      JSON.stringify({ error: 'Error al eliminar el mensaje.' }),
+      { status: 500, headers: { 'Content-Type': 'application/json' } }
+    );
+  }
+};

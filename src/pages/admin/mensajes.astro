@@ -58,6 +58,9 @@ const messages = await prisma.message.findMany({ orderBy: { createdAt: 'desc' } 
               <div class="message-actions">
                 {!msg.read && <button class="btn-sm btn-mark-read" data-id={msg.id}>Marcar como leído</button>}
                 <a href={`mailto:${msg.email}?subject=Re: Consulta desde sitio web`} class="btn-sm">Responder por email</a>
+                <button class="btn-sm btn-delete-msg" data-id={msg.id} style="color: var(--color-error); border-color: rgba(239,68,68,0.3);">
+                  🗑️ Eliminar de raíz
+                </button>
               </div>
             </div>
           ))
@@ -70,16 +73,69 @@ const messages = await prisma.message.findMany({ orderBy: { createdAt: 'desc' } 
 <script>
   const authToken = document.cookie.split(';').find(c => c.trim().startsWith('admin_auth='))?.split('=')[1] || '';
 
+  // Marcar como leído
   document.querySelectorAll('.btn-mark-read').forEach(btn => {
     btn.addEventListener('click', async () => {
       const id = Number((btn as HTMLElement).dataset.id);
-      // Use a simple fetch to mark as read — we'll update the message directly
       await fetch('/api/contacto', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
         body: JSON.stringify({ id, read: true }),
       });
       window.location.reload();
+    });
+  });
+
+  // Eliminar de raíz (Cumplimiento Derecho ARCO / Eliminación Permanente)
+  document.querySelectorAll('.btn-delete-msg').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const id = Number((btn as HTMLElement).dataset.id);
+
+      const confirm = await (window as any).Swal.fire({
+        title: '¿Eliminar de raíz?',
+        text: 'Esta acción borrará permanentemente este mensaje y los datos del usuario de la base de datos (Cumplimiento Derecho ARCO Ley 19.628).',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        cancelButtonColor: '#6b7280',
+        confirmButtonText: 'Sí, eliminar de raíz',
+        cancelButtonText: 'Cancelar',
+      });
+
+      if (!confirm.isConfirmed) return;
+
+      try {
+        const res = await fetch('/api/contacto', {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
+          body: JSON.stringify({ id }),
+        });
+
+        if (res.ok) {
+          await (window as any).Swal.fire({
+            title: '¡Eliminado!',
+            text: 'El mensaje y los datos personales asociados han sido borrados de la base de datos.',
+            icon: 'success',
+            confirmButtonColor: '#c9a84c',
+          });
+          window.location.reload();
+        } else {
+          const err = await res.json();
+          await (window as any).Swal.fire({
+            title: 'Error',
+            text: err.error || 'No se pudo eliminar el mensaje.',
+            icon: 'error',
+            confirmButtonColor: '#c9a84c',
+          });
+        }
+      } catch (error) {
+        await (window as any).Swal.fire({
+          title: 'Error de conexión',
+          text: 'Ocurrió un error al intentar eliminar de la base de datos.',
+          icon: 'error',
+          confirmButtonColor: '#c9a84c',
+        });
+      }
     });
   });
 </script>
