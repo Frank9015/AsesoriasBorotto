@@ -52,7 +52,13 @@ export const POST: APIRoute = async ({ request }) => {
         'auditoria': 'Auditoría Financiera',
         'otro': 'Otro'
       };
-      const displayService = serviceLabels[service || ''] || service || 'General';
+      const escapeHtml = (str: string) => String(str || '').replace(/[&<>"']/g, (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m] || m));
+
+      const safeName = escapeHtml(name);
+      const safeEmail = escapeHtml(email);
+      const safePhone = escapeHtml(phone || 'No especificado');
+      const safeService = escapeHtml(displayService);
+      const safeMessage = escapeHtml(message);
 
       const emailHtml = `
         <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #fafbfc; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);">
@@ -68,25 +74,25 @@ export const POST: APIRoute = async ({ request }) => {
             <table style="width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px;">
               <tr>
                 <td style="padding: 10px 0; border-bottom: 1px solid #e2e8f0; color: #64748b; font-weight: 600; width: 120px;">Nombre:</td>
-                <td style="padding: 10px 0; border-bottom: 1px solid #e2e8f0; color: #0f172a; font-weight: bold;">${name}</td>
+                <td style="padding: 10px 0; border-bottom: 1px solid #e2e8f0; color: #0f172a; font-weight: bold;">${safeName}</td>
               </tr>
               <tr>
                 <td style="padding: 10px 0; border-bottom: 1px solid #e2e8f0; color: #64748b; font-weight: 600;">Email:</td>
-                <td style="padding: 10px 0; border-bottom: 1px solid #e2e8f0; color: #0f172a;"><a href="mailto:${email}" style="color: #13254e; text-decoration: none; font-weight: 600;">${email}</a></td>
+                <td style="padding: 10px 0; border-bottom: 1px solid #e2e8f0; color: #0f172a;"><a href="mailto:${safeEmail}" style="color: #13254e; text-decoration: none; font-weight: 600;">${safeEmail}</a></td>
               </tr>
               <tr>
                 <td style="padding: 10px 0; border-bottom: 1px solid #e2e8f0; color: #64748b; font-weight: 600;">Teléfono:</td>
-                <td style="padding: 10px 0; border-bottom: 1px solid #e2e8f0; color: #0f172a;">${phone || 'No especificado'}</td>
+                <td style="padding: 10px 0; border-bottom: 1px solid #e2e8f0; color: #0f172a;">${safePhone}</td>
               </tr>
               <tr>
                 <td style="padding: 10px 0; border-bottom: 1px solid #e2e8f0; color: #64748b; font-weight: 600;">Servicio:</td>
-                <td style="padding: 10px 0; border-bottom: 1px solid #e2e8f0; color: #dfb653; font-weight: bold;">${displayService}</td>
+                <td style="padding: 10px 0; border-bottom: 1px solid #e2e8f0; color: #dfb653; font-weight: bold;">${safeService}</td>
               </tr>
             </table>
 
             <div style="background-color: #f8fafc; border-left: 4px solid #13254e; padding: 15px 20px; margin-top: 20px; border-radius: 4px;">
               <h4 style="margin: 0 0 8px 0; color: #13254e; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px;">Mensaje:</h4>
-              <p style="margin: 0; color: #334155; font-size: 15px; line-height: 1.6; white-space: pre-wrap;">${message}</p>
+              <p style="margin: 0; color: #334155; font-size: 15px; line-height: 1.6; white-space: pre-wrap;">${safeMessage}</p>
             </div>
           </div>
           <!-- Footer -->
@@ -138,7 +144,20 @@ export const POST: APIRoute = async ({ request }) => {
   }
 };
 
+function isAuthorized(request: Request): boolean {
+  const authHeader = request.headers.get('authorization');
+  if (!authHeader) return false;
+  const password = authHeader.replace('Bearer ', '');
+  return password === (import.meta.env.ADMIN_PASSWORD || 'admin123');
+}
+
 export const PUT: APIRoute = async ({ request }) => {
+  if (!isAuthorized(request)) {
+    return new Response(
+      JSON.stringify({ error: 'No autorizado' }),
+      { status: 401, headers: { 'Content-Type': 'application/json' } }
+    );
+  }
   try {
     const data = await request.json();
     const { id, read } = data;
@@ -151,7 +170,7 @@ export const PUT: APIRoute = async ({ request }) => {
     }
 
     const updated = await prisma.message.update({
-      where: { id },
+      where: { id: Number(id) },
       data: { read: read ?? true },
     });
 

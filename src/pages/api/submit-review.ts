@@ -32,14 +32,16 @@ export const POST: APIRoute = async ({ request }) => {
       );
     }
 
+    const numRating = Math.min(5, Math.max(1, Number(rating) || 5));
+
     // 2. Guardar el testimonio
     const newTestimonial = await prisma.testimonial.create({
       data: {
-        name,
-        company: company || null,
-        role: role || null,
-        text,
-        rating: Number(rating),
+        name: String(name).trim().slice(0, 100),
+        company: company ? String(company).trim().slice(0, 100) : null,
+        role: role ? String(role).trim().slice(0, 100) : null,
+        text: String(text).trim().slice(0, 1000),
+        rating: numRating,
         visible: true // Según solicitud del cliente
       }
     });
