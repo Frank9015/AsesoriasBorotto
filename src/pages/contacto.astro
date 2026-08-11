@@ -4,6 +4,10 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import Hero from '../components/Hero.astro';
 import WhatsAppButton from '../components/WhatsAppButton.astro';
+import { prisma } from '../lib/prisma';
+
+const plans = await prisma.plan.findMany({ orderBy: { order: 'asc' } });
+const services = await prisma.service.findMany({ orderBy: { order: 'asc' } });
 ---
 
 <Layout title="Contacto | Asesorías Borotto" description="Contáctanos para una consulta gratuita con Asesorías Borotto. Estamos aquí para ayudarte con tu contabilidad.">
@@ -11,7 +15,7 @@ import WhatsAppButton from '../components/WhatsAppButton.astro';
   <main>
     <Hero
       title='Hablemos de tu <span class="accent">negocio</span>'
-      subtitle="Agenda una consulta gratuita. Estoy aquí para ayudarte."
+      subtitle="Agenda una consulta gratuita o solicita la cotización de un plan a tu medida."
       compact={true}
       ctaPrimary={{ text: 'Ver Planes', href: '/planes' }}
       ctaSecondary={{ text: 'Sobre Mí', href: '/sobre-mi' }}
@@ -23,7 +27,7 @@ import WhatsAppButton from '../components/WhatsAppButton.astro';
           <!-- Formulario -->
           <div class="contact-form-wrapper reveal-left">
             <h2>Envíame un mensaje</h2>
-            <p style="margin-bottom: var(--space-6);">Completa el formulario y te responderé a la brevedad.</p>
+            <p style="margin-bottom: var(--space-6);">Completa el formulario indicando tu plan o servicio de interés y te responderé a la brevedad.</p>
 
             <form id="contact-form" class="contact-form">
               <div class="form-row">
@@ -42,22 +46,38 @@ import WhatsAppButton from '../components/WhatsAppButton.astro';
                   <input type="tel" id="phone" name="phone" class="form-input" placeholder="+56 9 xxxx xxxx" />
                 </div>
                 <div class="form-group">
-                  <label class="form-label" for="service">Servicio de interés</label>
-                  <select id="service" name="service" class="form-select">
-                    <option value="">Seleccionar...</option>
-                    <option value="impuestos">Declaración de Impuestos</option>
-                    <option value="contabilidad">Contabilidad Completa</option>
-                    <option value="remuneraciones">Remuneraciones</option>
-                    <option value="inicio-actividades">Inicio de Actividades</option>
-                    <option value="asesoria">Asesoría Tributaria</option>
-                    <option value="auditoria">Auditoría Financiera</option>
-                    <option value="otro">Otro</option>
+                  <label class="form-label" for="service">Motivo / Servicio o Plan *</label>
+                  <select id="service" name="service" class="form-select" required>
+                    <option value="">Seleccionar motivo de contacto...</option>
+                    
+                    <optgroup label="📋 Cotizar un Plan Mensual (UF)">
+                      {plans.map((p) => (
+                        <option value={`Plan: ${p.name} (${p.price})`}>
+                          Plan {p.name} ({p.price})
+                        </option>
+                      ))}
+                      <option value="Plan Personalizado / Cotización a Medida">✨ Plan Personalizado / Cotización a Medida</option>
+                    </optgroup>
+
+                    <optgroup label="💼 Contratar Servicio Específico">
+                      {services.map((s) => (
+                        <option value={`Servicio: ${s.name}`}>
+                          Servicio: {s.name}
+                        </option>
+                      ))}
+                    </optgroup>
+
+                    <optgroup label="💬 Consultas Generales">
+                      <option value="Consulta Tributaria / Contable">Consulta Tributaria / Contable</option>
+                      <option value="Agendar Primera Consulta Gratuita">Agendar Primera Consulta Gratuita</option>
+                      <option value="Otro Motivo">Otro Motivo</option>
+                    </optgroup>
                   </select>
                 </div>
               </div>
               <div class="form-group">
                 <label class="form-label" for="message">Mensaje *</label>
-                <textarea id="message" name="message" class="form-textarea" required placeholder="Cuéntame sobre tu negocio y cómo puedo ayudarte..."></textarea>
+                <textarea id="message" name="message" class="form-textarea" required placeholder="Cuéntame sobre tu negocio, tus dudas o lo que necesitas..."></textarea>
               </div>
               <div class="form-group" style="margin-bottom: var(--space-4);">
                 <label style="display: flex; align-items: flex-start; gap: 10px; cursor: pointer; font-size: var(--text-xs); color: var(--color-text-muted); line-height: 1.5;">
@@ -135,6 +155,39 @@ import WhatsAppButton from '../components/WhatsAppButton.astro';
   const form = document.getElementById('contact-form') as HTMLFormElement;
   const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement;
   const status = document.getElementById('form-status') as HTMLDivElement;
+
+  // Auto-seleccionar motivo/plan/servicio desde los parámetros de URL
+  document.addEventListener('DOMContentLoaded', () => {
+    const params = new URLSearchParams(window.location.search);
+    const planParam = params.get('plan');
+    const servicioParam = params.get('servicio');
+    const selectElem = document.getElementById('service') as HTMLSelectElement | null;
+    const messageElem = document.getElementById('message') as HTMLTextAreaElement | null;
+
+    if (selectElem) {
+      const options = Array.from(selectElem.options);
+
+      if (planParam) {
+        const found = options.find(opt => opt.value.toLowerCase().includes(planParam.toLowerCase()));
+        if (found) {
+          selectElem.value = found.value;
+        } else {
+          selectElem.value = 'Plan Personalizado / Cotización a Medida';
+        }
+        if (messageElem && !messageElem.value) {
+          messageElem.value = `Hola Rossana, me gustaría solicitar información y cotización sobre el Plan ${planParam}.`;
+        }
+      } else if (servicioParam) {
+        const found = options.find(opt => opt.value.toLowerCase().includes(servicioParam.toLowerCase()));
+        if (found) {
+          selectElem.value = found.value;
+        }
+        if (messageElem && !messageElem.value) {
+          messageElem.value = `Hola Rossana, me gustaría solicitar información y cotizar el servicio de ${servicioParam}.`;
+        }
+      }
+    }
+  });
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();

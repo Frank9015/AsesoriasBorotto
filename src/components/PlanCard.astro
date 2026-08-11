@@ -35,8 +35,8 @@ const { name, price, description, features, highlighted = false } = Astro.props;
     })}
   </ul>
 
-  <a href="/contacto" class:list={['btn', 'w-full', highlighted ? 'btn-primary' : 'btn-secondary']} style="text-align:center; margin-top: auto;">
-    Solicitar
+  <a href={`/contacto?plan=${encodeURIComponent(name)}`} class:list={['btn', 'w-full', highlighted ? 'btn-primary' : 'btn-secondary']} style="text-align:center; margin-top: auto;">
+    Solicitar Plan
   </a>
 </div>
 
