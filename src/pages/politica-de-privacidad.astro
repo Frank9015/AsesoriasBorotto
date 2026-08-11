@@ -1,0 +1,134 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Hero from '../components/Hero.astro';
+import WhatsAppButton from '../components/WhatsAppButton.astro';
+---
+
+<Layout 
+  title="Política de Privacidad | Asesorías Borotto" 
+  description="Conoce nuestra política de privacidad y protección de datos personales en cumplimiento con la Ley N° 19.628 de Chile y estándares internacionales de ciberseguridad."
+>
+  <Header />
+  <main>
+    <Hero
+      title='Política de <span class="accent">Privacidad</span>'
+      subtitle="Protección y tratamiento responsable de tus datos personales."
+      compact={true}
+      ctaPrimary={{ text: 'Ir a Contacto', href: '/contacto' }}
+      ctaSecondary={{ text: 'Ver Servicios', href: '/servicios' }}
+    />
+
+    <section class="section">
+      <div class="container">
+        <div class="legal-card card-glass reveal">
+          <span class="section-label">Marco Legal & Compromiso</span>
+          <h2>Tratamiento Seguro de Datos Personales</h2>
+          <p class="updated-date">Última actualización: Agosto 2026 | Santiago, Chile</p>
+
+          <hr class="legal-divider" />
+
+          <div class="legal-content">
+            <h3>1. Identificación del Responsable</h3>
+            <p>El sitio web oficial <strong>asesoriasborotto.cl</strong> es operado por la firma de servicios profesionales <strong>Asesorías Borotto</strong>, con domicilio en Santiago, Chile. Para cualquier consulta sobre la presente política o el tratamiento de tus datos, puedes contactarnos al correo <a href="mailto:contacto@asesoriasborotto.cl">contacto@asesoriasborotto.cl</a>.</p>
+
+            <h3>2. Marco Normativo Aplicable</h3>
+            <p>Nos comprometemos a resguardar la privacidad de los usuarios en estricto cumplimiento con la <strong>Ley N° 19.628 sobre Protección de la Vida Privada</strong> de la República de Chile, la <strong>Ley N° 21.663 (Ley Marco de Ciberseguridad)</strong>, así como los principios de transparencia y seguridad inspirados en el Reglamento General de Protección de Datos (RGPD / GDPR).</p>
+
+            <h3>3. Datos Recolectados y Finalidad</h3>
+            <p>A través de nuestros formularios digitales de contacto y reserva de servicios, recolectamos exclusivamente la siguiente información personal:</p>
+            <ul>
+              <li><strong>Datos de Identificación y Contacto:</strong> Nombre completo, correo electrónico y número telefónico.</li>
+              <li><strong>Información del Servicio Solicitado:</strong> Tipo de asesoría (contable, tributaria, remuneraciones, auditoría) y detalle del mensaje proporcionado voluntariamente por el usuario.</li>
+            </ul>
+            <p><strong>Finalidad:</strong> Dichos datos son utilizados única y exclusivamente para atender tus consultas, elaborar cotizaciones de planes contables y prestar los servicios profesionales contratados.</p>
+
+            <h3>4. Confidencialidad y No Transferencia a Terceros</h3>
+            <p>Asesorías Borotto <strong>no vende, arrienda, cede ni comercializa</strong> bajo ninguna circunstancia los datos personales de sus usuarios o clientes a terceras empresas u organizaciones. La información únicamente podrá ser revelada en caso de requerimiento judicial o legal emitido por autoridades chilenas competentes.</p>
+
+            <h3>5. Medidas de Seguridad y Ciberseguridad</h3>
+            <p>Implementamos salvaguardas técnicas y organizativas para proteger tus datos contra accesos no autorizados, pérdida o alteración:</p>
+            <ul>
+              <li><strong>Cifrado SSL/TLS:</strong> Toda la navegación y el envío de formularios se transmite mediante canales encriptados HTTPS con certificados digitales de alta seguridad.</li>
+              <li><strong>Infraestructura Protegida:</strong> Los servidores y bases de datos relacionales cuentan con controles de acceso restringidos, autenticación multifactor y cifrado en reposo.</li>
+              <li><strong>Sanitización de Datos:</strong> Los datos recibidos son procesados mediante algoritmos contra ataques de inyección (XSS y SQL Injection).</li>
+            </ul>
+
+            <h3>6. Derechos del Titular (Derechos ARCO)</h3>
+            <p>Como titular de tus datos personales, la legislación chilena te otorga los siguientes derechos:</p>
+            <ul>
+              <li><strong>Acceso:</strong> Solicitar información sobre los datos personales tuyos que mantenemos almacenados.</li>
+              <li><strong>Rectificación:</strong> Solicitar la corrección de datos inexactos, desactualizados o incompletos.</li>
+              <li><strong>Cancelación / Eliminación:</strong> Solicitar la eliminación de tus datos personales de nuestros registros cuando hayan dejado de ser necesarios para la finalidad originaria.</li>
+              <li><strong>Oposición:</strong> Oponerte al tratamiento de tus datos para fines específicos.</li>
+            </ul>
+            <p>Para ejercer cualquiera de estos derechos, basta con enviar una solicitud por escrito a <a href="mailto:contacto@asesoriasborotto.cl">contacto@asesoriasborotto.cl</a> indicando tu nombre completo y la solicitud correspondiente.</p>
+
+            <h3>7. Modificaciones a la Política</h3>
+            <p>Nos reservamos el derecho de actualizar la presente Política de Privacidad para adecuarla a futuras reformas legislativas en Chile. Cualquier cambio será publicado oportunamente en esta misma sección.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <Footer />
+  <WhatsAppButton />
+</Layout>
+
+<style>
+  .legal-card {
+    padding: var(--space-12) var(--space-8);
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .updated-date {
+    font-size: var(--text-xs);
+    color: var(--color-accent);
+    font-weight: 600;
+    margin-top: var(--space-2);
+  }
+
+  .legal-divider {
+    border: 0;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.1);
+    margin: var(--space-8) 0;
+  }
+
+  .legal-content h3 {
+    font-size: var(--text-xl);
+    color: var(--color-primary);
+    margin-top: var(--space-8);
+    margin-bottom: var(--space-3);
+  }
+
+  .legal-content p, .legal-content li {
+    font-size: var(--text-base);
+    color: var(--color-text);
+    line-height: 1.75;
+    margin-bottom: var(--space-4);
+  }
+
+  .legal-content ul {
+    margin-left: var(--space-6);
+    margin-bottom: var(--space-6);
+    list-style: disc;
+  }
+
+  .legal-content li {
+    margin-bottom: var(--space-2);
+  }
+
+  .legal-content a {
+    color: var(--color-accent);
+    text-decoration: underline;
+  }
+
+  @media (max-width: 640px) {
+    .legal-card {
+      padding: var(--space-6);
+    }
+  }
+</style>

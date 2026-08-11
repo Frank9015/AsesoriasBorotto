@@ -59,6 +59,12 @@ import WhatsAppButton from '../components/WhatsAppButton.astro';
                 <label class="form-label" for="message">Mensaje *</label>
                 <textarea id="message" name="message" class="form-textarea" required placeholder="Cuéntame sobre tu negocio y cómo puedo ayudarte..."></textarea>
               </div>
+              <div class="form-group" style="margin-bottom: var(--space-4);">
+                <label style="display: flex; align-items: flex-start; gap: 10px; cursor: pointer; font-size: var(--text-xs); color: var(--color-text-muted); line-height: 1.5;">
+                  <input type="checkbox" id="privacy-consent" name="privacy-consent" required style="margin-top: 3px; accent-color: var(--color-accent);" />
+                  <span>He leído y acepto la <a href="/politica-de-privacidad" target="_blank" style="color: var(--color-accent); text-decoration: underline;">Política de Privacidad</a> y el tratamiento confidencial de mis datos personales. *</span>
+                </label>
+              </div>
               <button type="submit" class="btn btn-primary btn-lg w-full" id="submit-btn">
                 Enviar Mensaje
               </button>
