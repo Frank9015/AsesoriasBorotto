@@ -61,41 +61,53 @@ export const POST: APIRoute = async ({ request }) => {
       const safeService = escapeHtml(displayService);
       const safeMessage = escapeHtml(message);
 
+      const origin = new URL(request.url).origin;
+      const logoUrl = `${origin}/logo-light.png`;
+
       const emailHtml = `
         <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #fafbfc; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);">
           <!-- Header -->
-          <div style="background: linear-gradient(135deg, #13254e, #1e3a75); padding: 30px 20px; text-align: center; border-bottom: 3px solid #dfb653;">
-            <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 700; letter-spacing: 0.5px;">Asesorías Borotto</h1>
-            <p style="color: #dfb653; margin: 5px 0 0; font-size: 14px; font-weight: 600; text-transform: uppercase;">Nuevo Mensaje de Contacto</p>
+          <div style="background: linear-gradient(135deg, #13254e, #1e3a75); padding: 35px 20px 25px; text-align: center; border-bottom: 4px solid #dfb653;">
+            <img src="${logoUrl}" alt="Asesorías Borotto" style="height: 64px; width: auto; max-width: 240px; margin-bottom: 10px; display: block; margin-left: auto; margin-right: auto;" />
+            <p style="color: #dfb653; margin: 5px 0 0; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">Nuevo Mensaje de Contacto</p>
           </div>
+
           <!-- Body -->
           <div style="padding: 30px 25px; background-color: #ffffff;">
-            <p style="color: #334155; font-size: 16px; line-height: 1.5; margin-top: 0;">Has recibido una nueva consulta a través del formulario de contacto del sitio web.</p>
+            <p style="color: #334155; font-size: 15px; line-height: 1.6; margin-top: 0;">Has recibido un nuevo mensaje a través del sitio web oficial de <strong>Asesorías Borotto</strong>:</p>
             
             <table style="width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 14px;">
               <tr>
-                <td style="padding: 10px 0; border-bottom: 1px solid #e2e8f0; color: #64748b; font-weight: 600; width: 120px;">Nombre:</td>
-                <td style="padding: 10px 0; border-bottom: 1px solid #e2e8f0; color: #0f172a; font-weight: bold;">${safeName}</td>
+                <td style="padding: 10px 0; border-bottom: 1px solid #f1f5f9; color: #64748b; font-weight: 600; width: 120px;">Nombre:</td>
+                <td style="padding: 10px 0; border-bottom: 1px solid #f1f5f9; color: #0f172a; font-weight: 700;">${safeName}</td>
               </tr>
               <tr>
-                <td style="padding: 10px 0; border-bottom: 1px solid #e2e8f0; color: #64748b; font-weight: 600;">Email:</td>
-                <td style="padding: 10px 0; border-bottom: 1px solid #e2e8f0; color: #0f172a;"><a href="mailto:${safeEmail}" style="color: #13254e; text-decoration: none; font-weight: 600;">${safeEmail}</a></td>
+                <td style="padding: 10px 0; border-bottom: 1px solid #f1f5f9; color: #64748b; font-weight: 600;">Email:</td>
+                <td style="padding: 10px 0; border-bottom: 1px solid #f1f5f9; color: #0f172a;"><a href="mailto:${safeEmail}" style="color: #13254e; text-decoration: none; font-weight: 600;">${safeEmail}</a></td>
               </tr>
               <tr>
-                <td style="padding: 10px 0; border-bottom: 1px solid #e2e8f0; color: #64748b; font-weight: 600;">Teléfono:</td>
-                <td style="padding: 10px 0; border-bottom: 1px solid #e2e8f0; color: #0f172a;">${safePhone}</td>
+                <td style="padding: 10px 0; border-bottom: 1px solid #f1f5f9; color: #64748b; font-weight: 600;">Teléfono:</td>
+                <td style="padding: 10px 0; border-bottom: 1px solid #f1f5f9; color: #0f172a;">${safePhone}</td>
               </tr>
               <tr>
-                <td style="padding: 10px 0; border-bottom: 1px solid #e2e8f0; color: #64748b; font-weight: 600;">Servicio:</td>
-                <td style="padding: 10px 0; border-bottom: 1px solid #e2e8f0; color: #dfb653; font-weight: bold;">${safeService}</td>
+                <td style="padding: 10px 0; border-bottom: 1px solid #f1f5f9; color: #64748b; font-weight: 600;">Motivo / Interés:</td>
+                <td style="padding: 10px 0; border-bottom: 1px solid #f1f5f9; color: #dfb653; font-weight: 700;">${safeService}</td>
               </tr>
             </table>
 
-            <div style="background-color: #f8fafc; border-left: 4px solid #13254e; padding: 15px 20px; margin-top: 20px; border-radius: 4px;">
-              <h4 style="margin: 0 0 8px 0; color: #13254e; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px;">Mensaje:</h4>
+            <div style="background-color: #f8fafc; border-left: 4px solid #13254e; padding: 18px 20px; margin-top: 20px; border-radius: 6px;">
+              <h4 style="margin: 0 0 8px 0; color: #13254e; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Mensaje del Cliente:</h4>
               <p style="margin: 0; color: #334155; font-size: 15px; line-height: 1.6; white-space: pre-wrap;">${safeMessage}</p>
             </div>
+
+            <!-- Action Button -->
+            <div style="text-align: center; margin-top: 30px;">
+              <a href="mailto:${safeEmail}?subject=Re:%20Contacto%20Asesor%C3%ADas%20Borotto" style="display: inline-block; background-color: #13254e; color: #ffffff; font-weight: 700; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-size: 14px; border: 1px solid #dfb653; box-shadow: 0 4px 10px rgba(19, 37, 78, 0.2);">
+                ✉️ Responder directamente a ${safeName}
+              </a>
+            </div>
           </div>
+
           <!-- Footer -->
           <div style="background-color: #f1f5f9; padding: 20px; text-align: center; border-top: 1px solid #e2e8f0; font-size: 12px; color: #64748b;">
             <p style="margin: 0;">Este es un correo automático generado por el sitio web oficial de Asesorías Borotto.</p>
@@ -116,9 +128,10 @@ export const POST: APIRoute = async ({ request }) => {
         });
 
         await transporter.sendMail({
-          from: `"Contacto Web" <${smtpUser}>`,
+          from: `"Asesorías Borotto Web" <${smtpUser}>`,
+          replyTo: `"${safeName}" <${safeEmail}>`,
           to: notificationEmail,
-          subject: `Nuevo contacto: ${name} - ${service || 'General'}`,
+          subject: `Nuevo contacto: ${name} - ${displayService}`,
           html: emailHtml,
         });
         console.log('📬 Correo de notificación enviado correctamente.');
