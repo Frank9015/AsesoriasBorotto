@@ -41,7 +41,7 @@ export const POST: APIRoute = async ({ request }) => {
       const smtpPort = Number(import.meta.env.SMTP_PORT) || 587;
       const smtpUser = import.meta.env.SMTP_USER;
       const smtpPass = import.meta.env.SMTP_PASSWORD;
-      const notificationEmail = import.meta.env.NOTIFICATION_EMAIL || 'contacto@asesoriasborotto.cl';
+      const notificationEmail = import.meta.env.NOTIFICATION_EMAIL || 'rossana.b@asesoriasborotto.cl';
 
       const serviceLabels: Record<string, string> = {
         'impuestos': 'Declaración de Impuestos',
