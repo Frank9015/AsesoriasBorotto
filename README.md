@@ -1,4 +1,4 @@
-﻿# Sitio Web Profesional — Asesorías Borotto
+# Sitio Web Profesional — Asesorías Borotto
 
 > **Estado del proyecto:** ✅ **FINALIZADO Y EN PRODUCCIÓN** — `asesoriasborotto.cl`
 
@@ -12,6 +12,7 @@ Sitio web dinámico, profesional y autogestionable para la firma contable **Ases
 |---|---|
 | **Nombre comercial** | Asesorías Borotto |
 | **Razón social** | Borotto y Castillo Asociados LTDA |
+| **RUT** | 78.453.841-9 |
 | **Domicilio legal** | Roger de Flor 2736, Oficina 91, Santiago, Chile |
 | **Correo oficial** | rossana.b@asesoriasborotto.cl |
 | **Teléfono** | +56 9 7376 4841 |
