@@ -129,6 +129,7 @@ contadora-sitio/
 
 ## 🛡️ Seguridad Implementada
 
+### Capa de Aplicación (Astro / Vercel)
 - Autenticación admin via cookie HttpOnly + `ADMIN_PASSWORD`
 - PUT y DELETE en `/api/contacto` requieren Bearer token de autorización
 - Sanitización HTML en templates de correo (prevención XSS)
@@ -137,7 +138,46 @@ contadora-sitio/
 - `rel="noopener noreferrer"` en todos los enlaces externos
 - HTTPS forzado por Vercel en producción
 
+### Capa de Red (Cloudflare)
+- WAF (Web Application Firewall) activo en plan Free
+- Protección DDoS automática
+- Cifrado SSL/TLS en modo **Full (Strict)**
+- **Always Use HTTPS** activado
+- TLS mínimo: **TLS 1.2** (TLS 1.3 también habilitado)
+- **Automatic HTTPS Rewrites** activado
+- **Browser Integrity Check** activado
+- **Opportunistic Encryption** activado
+- IP real de Vercel oculta detrás de Cloudflare (proxy activo 🟠)
+
 ---
+
+## ☁️ Infraestructura Cloudflare
+
+El dominio `asesoriasborotto.cl` está protegido por **Cloudflare Free** actuando como proxy inverso frente a Vercel.
+
+### Flujo de tráfico
+```
+Usuario → Cloudflare (CDN + WAF + DDoS) → Vercel (SSR) → Neon PostgreSQL
+```
+
+### Nameservers (NIC Chile)
+| Nameserver | Estado |
+|---|---|
+| `millie.ns.cloudflare.com` | ✅ Activo |
+| `vicente.ns.cloudflare.com` | ✅ Activo |
+
+### Configuración SSL/TLS aplicada
+| Parámetro | Valor |
+|---|---|
+| Modo cifrado | Full (Strict) |
+| Always Use HTTPS | Activado |
+| TLS mínimo | TLS 1.2 |
+| TLS 1.3 | Activado |
+| Automatic HTTPS Rewrites | Activado |
+| Browser Integrity Check | Activado |
+
+> **Nota**: Vercel sigue siendo el servidor de ejecución. Cloudflare no afecta el código, la base de datos ni el despliegue. Los cambios en Vercel (`git push`) se despliegan normalmente.
+
 
 ## 🌐 Variables de Entorno (Vercel)
 
