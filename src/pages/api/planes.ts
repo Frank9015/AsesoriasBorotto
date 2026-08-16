@@ -26,7 +26,7 @@ export const POST: APIRoute = async ({ request }) => {
     const plan = await prisma.plan.create({ data: {
       name: data.name,
       price: data.price,
-      description: data.description,
+      description: data.description || "",
       features: data.features || [],
       highlighted: data.highlighted || false,
       order: data.order || 0,
@@ -48,7 +48,7 @@ export const PUT: APIRoute = async ({ request }) => {
       data: {
         name: data.name,
         price: data.price,
-        description: data.description,
+        description: data.description !== undefined ? data.description : "",
         features: data.features,
         highlighted: data.highlighted,
         order: data.order,

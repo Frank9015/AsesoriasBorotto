@@ -14,7 +14,7 @@ const { name, price, description, features, highlighted = false } = Astro.props;
   {highlighted && <span class="badge badge-accent plan-badge">Popular</span>}
   <h3 class="plan-name">{name}</h3>
   <p class="plan-price">{price}</p>
-  <p class="plan-desc">{description}</p>
+  {description && description.trim() !== "" && <p class="plan-desc">{description}</p>}
   
   <ul class="plan-features">
     {features.map((feature) => {

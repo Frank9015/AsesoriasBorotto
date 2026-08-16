@@ -24,7 +24,7 @@ export const POST: APIRoute = async ({ request }) => {
     const data = await request.json();
     const service = await prisma.service.create({ data: {
       name: data.name,
-      description: data.description,
+      description: data.description || "",
       icon: data.icon || 'file-text',
       features: data.features || [],
       price: data.price || null,
@@ -46,7 +46,7 @@ export const PUT: APIRoute = async ({ request }) => {
       where: { id: data.id },
       data: {
         name: data.name,
-        description: data.description,
+        description: data.description !== undefined ? data.description : "",
         icon: data.icon,
         features: data.features || [],
         price: data.price || null,
