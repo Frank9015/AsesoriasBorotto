@@ -2,7 +2,7 @@
 interface Props {
   name: string;
   price: string;
-  description: string;
+  description?: string;
   features: string[];
   highlighted?: boolean;
 }
@@ -11,32 +11,65 @@ const { name, price, description, features, highlighted = false } = Astro.props;
 ---
 
 <div class:list={['plan-card', { highlighted }]}>
-  {highlighted && <span class="badge badge-accent plan-badge">Popular</span>}
-  <h3 class="plan-name">{name}</h3>
-  <p class="plan-price">{price}</p>
-  {description && description.trim() !== "" && <p class="plan-desc">{description}</p>}
-  
-  <ul class="plan-features">
-    {features.map((feature) => {
-      const isSub = feature.trim().startsWith('•');
-      const cleanText = isSub ? feature.replace(/^•\s*/, '') : feature;
-      return (
-        <li class={isSub ? 'sub-feature' : ''}>
-          {!isSub ? (
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="20 6 9 17 4 12"/>
-            </svg>
-          ) : (
-            <span class="bullet-dot">•</span>
-          )}
-          <span>{cleanText}</span>
-        </li>
-      );
-    })}
-  </ul>
+  {highlighted && (
+    <div class="plan-popular-badge">
+      <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+      </svg>
+      <span>MÁS ELEGIDO</span>
+    </div>
+  )}
 
-  <a href={`/contacto?plan=${encodeURIComponent(name)}`} class:list={['btn', 'w-full', highlighted ? 'btn-primary' : 'btn-secondary']} style="text-align:center; margin-top: auto;">
+  <!-- Plan Header -->
+  <div class="plan-card-top">
+    <h3 class="plan-name">{name}</h3>
+  </div>
+
+  <!-- Pricing Box (Coherent with Service Cards) -->
+  <div class="plan-pricing-box">
+    <span class="pricing-box-label">Tarifa Mensual</span>
+    <div class="pricing-box-val-row">
+      <span class="pricing-amount">{price}</span>
+    </div>
+  </div>
+
+  <!-- Optional Description -->
+  {description && description.trim() !== "" && (
+    <p class="plan-desc">{description}</p>
+  )}
+
+  <!-- Features List -->
+  <div class="plan-features-wrapper">
+    <span class="features-header-label">¿Qué incluye este plan?</span>
+    <ul class="plan-features">
+      {features.map((feature) => {
+        const isSub = feature.trim().startsWith('•');
+        const cleanText = isSub ? feature.replace(/^•\s*/, '') : feature;
+        return (
+          <li class={isSub ? 'sub-feature' : ''}>
+            {!isSub ? (
+              <div class="check-icon-wrapper">
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="check-icon">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+              </div>
+            ) : (
+              <span class="bullet-dot">•</span>
+            )}
+            <span>{cleanText}</span>
+          </li>
+        );
+      })}
+    </ul>
+  </div>
+
+  <!-- Action Button -->
+  <a href={`/contacto?plan=${encodeURIComponent(name)}`} class:list={['btn', 'plan-card-btn', highlighted ? 'btn-primary' : 'btn-secondary']}>
     Solicitar Plan
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="5" y1="12" x2="19" y2="12"/>
+      <polyline points="12 5 19 12 12 19"/>
+    </svg>
   </a>
 </div>
 
@@ -45,91 +78,192 @@ const { name, price, description, features, highlighted = false } = Astro.props;
     position: relative;
     display: flex;
     flex-direction: column;
-    background: var(--color-surface);
-    border: 1.5px solid var(--color-border-light);
-    border-radius: var(--radius-lg);
+    background: #ffffff;
+    border: 1px solid rgba(19, 37, 78, 0.12);
+    border-radius: 20px;
     padding: var(--space-8);
     transition: all var(--transition-base);
+    box-shadow: 0 10px 30px rgba(19, 37, 78, 0.06);
+    overflow: hidden;
+    height: 100%;
+    width: 100%;
+  }
+
+  .plan-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #c9a84c 0%, #dfc374 50%, #c9a84c 100%);
   }
 
   .plan-card:hover {
-    transform: translateY(-6px);
-    box-shadow: var(--shadow-xl);
+    transform: translateY(-8px);
+    box-shadow: 0 20px 45px rgba(19, 37, 78, 0.14);
+    border-color: rgba(201, 168, 76, 0.5);
   }
 
   .plan-card.highlighted {
-    border-color: var(--color-accent);
-    box-shadow: var(--shadow-glow);
-    transform: scale(1.03);
+    border: 2px solid var(--color-accent);
+    box-shadow: 0 18px 45px rgba(201, 168, 76, 0.2);
+    transform: scale(1.02);
   }
 
   .plan-card.highlighted:hover {
-    transform: scale(1.03) translateY(-6px);
+    transform: scale(1.02) translateY(-8px);
   }
 
-  .plan-badge {
+  .plan-popular-badge {
     position: absolute;
-    top: -12px;
-    left: 50%;
-    transform: translateX(-50%);
+    top: 14px;
+    right: 18px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: linear-gradient(135deg, #c9a84c 0%, #e2c878 100%);
+    color: var(--color-primary-dark);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.3rem 0.75rem;
+    border-radius: var(--radius-full);
+    box-shadow: 0 4px 12px rgba(201, 168, 76, 0.35);
+  }
+
+  .plan-card-top {
+    margin-bottom: var(--space-4);
   }
 
   .plan-name {
     font-family: var(--font-heading);
-    font-size: var(--text-2xl);
+    font-size: 1.45rem;
     font-weight: 700;
     color: var(--color-primary);
-    margin-bottom: var(--space-2);
+    line-height: 1.25;
+    min-height: 45px;
+    display: flex;
+    align-items: center;
   }
 
-  .plan-price {
+  /* Pricing Box */
+  .plan-pricing-box {
+    background: linear-gradient(135deg, rgba(201, 168, 76, 0.08) 0%, rgba(19, 37, 78, 0.02) 100%);
+    border: 1px solid rgba(201, 168, 76, 0.3);
+    border-radius: 14px;
+    padding: 0.85rem 1.1rem;
+    margin-bottom: var(--space-5);
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .pricing-box-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 700;
+    color: #9b7824;
+  }
+
+  .pricing-box-val-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+  }
+
+  .pricing-amount {
     font-family: var(--font-heading);
-    font-size: var(--text-3xl);
+    font-size: 1.55rem;
     font-weight: 800;
-    color: var(--color-accent);
-    margin-bottom: var(--space-4);
+    color: #b08d32;
+    letter-spacing: -0.01em;
+    line-height: 1.1;
   }
 
   .plan-desc {
-    font-size: var(--text-sm);
+    font-size: 0.88rem;
     color: var(--color-text-muted);
+    line-height: 1.55;
+    margin-bottom: var(--space-5);
+    padding: 0.5rem 0.75rem;
+    background: #f8f9fc;
+    border-radius: 8px;
+    border-left: 3px solid var(--color-accent);
+  }
+
+  /* Features */
+  .plan-features-wrapper {
     margin-bottom: var(--space-6);
-    line-height: 1.6;
+  }
+
+  .features-header-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-3);
   }
 
   .plan-features {
     display: flex;
     flex-direction: column;
-    gap: var(--space-3);
-    margin-bottom: var(--space-8);
+    gap: 0.75rem;
   }
 
   .plan-features li {
     display: flex;
     align-items: flex-start;
-    gap: var(--space-2);
-    font-size: var(--text-sm);
+    gap: 0.65rem;
+    font-size: 0.88rem;
     color: var(--color-text);
-    line-height: 1.5;
+    line-height: 1.45;
   }
 
   .plan-features li.sub-feature {
-    padding-left: var(--space-5);
+    padding-left: 1.6rem;
     color: var(--color-text-muted);
+    font-size: 0.84rem;
   }
 
-  .plan-features svg {
+  .check-icon-wrapper {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: rgba(201, 168, 76, 0.18);
+    display: flex;
+    align-items: center;
+    justify-content: center;
     flex-shrink: 0;
-    color: var(--color-success);
-    margin-top: 0.15rem;
+    margin-top: 1px;
+  }
+
+  .check-icon {
+    color: #9b7824;
   }
 
   .bullet-dot {
     color: var(--color-accent);
     font-weight: bold;
-    font-size: 1.2rem;
+    font-size: 1rem;
     line-height: 1;
-    margin-right: var(--space-1);
+    margin-right: 0.25rem;
     flex-shrink: 0;
+  }
+
+  .plan-card-btn {
+    width: 100%;
+    margin-top: auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-weight: 700;
+    padding: 0.85rem 1.2rem;
+    border-radius: 12px;
   }
 </style>
