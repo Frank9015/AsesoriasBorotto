@@ -76,9 +76,33 @@ const steps = [
                     <Fragment set:html={iconMap[service.icon] || iconMap['file-text']} />
                   </svg>
                 </div>
-                {service.price && <span class="service-price-badge">{service.price}</span>}
               </div>
               <h3 class="service-name">{service.name}</h3>
+
+              {(() => {
+                const priceInfo = formatServicePrice(service.price);
+                if (!priceInfo) return null;
+                if (priceInfo.type === 'evaluation-only') {
+                  return (
+                    <div class="service-price-wrapper">
+                      <span class="service-price-pill evaluation">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                          <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
+                        </svg>
+                        Sujeto a evaluación
+                      </span>
+                    </div>
+                  );
+                }
+                return (
+                  <div class="service-price-wrapper">
+                    <span class="service-price-main">{priceInfo.amount}</span>
+                    {priceInfo.condition && (
+                      <span class="service-price-pill subtle">{priceInfo.condition}</span>
+                    )}
+                  </div>
+                );
+              })()}
               {service.description && service.description.trim() !== '' && (
                 <p class="service-desc" set:html={service.description.replace(/\n/g, '<br/>')}></p>
               )}
