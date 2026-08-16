@@ -23,6 +23,28 @@ const iconMap: Record<string, string> = {
   'palette': '<circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.46 2 12 2z"/>'
 };
 
+
+// Helper para formatear precios variados de servicios de manera inteligente
+function formatServicePrice(rawPrice?: string | null) {
+  if (!rawPrice || !rawPrice.trim()) return null;
+  const p = rawPrice.trim();
+  
+  if (/^(valor\s+)?sujet[oa]\s+a\s+evaluaci[oó]n|consultar|a\s+convenir$/i.test(p)) {
+    return { type: 'evaluation-only', amount: 'Sujeto a evaluación', condition: null };
+  }
+
+  const evalIdx = p.toLowerCase().indexOf('sujet');
+  if (evalIdx > 0) {
+    return {
+      type: 'amount-with-condition',
+      amount: p.substring(0, evalIdx).trim(),
+      condition: 'Sujeto a evaluación'
+    };
+  }
+
+  return { type: 'standard', amount: p, condition: null };
+}
+
 const steps = [
   { num: '01', title: 'Conversemos', desc: 'Cuéntame sobre tu negocio y tus necesidades contables. Agendemos una llamada o reunión.' },
   { num: '02', title: 'Plan personalizado', desc: 'Diseño un plan de trabajo adaptado a tu empresa, con plazos y entregables claros.' },
