@@ -50,10 +50,10 @@ const testimonials = await prisma.testimonial.findMany({ where: { visible: true 
           </div>
         )}
 
-        <div class="cta-section reveal" style="margin-top: var(--space-16);">
-          <div class="card-glass" style="text-align: center; padding: var(--space-10);">
+        <div class="testimonials-cta reveal">
+          <div class="card-glass testimonials-cta-card">
             <h3>¿Quieres ser el próximo caso de éxito?</h3>
-            <p style="margin: var(--space-4) auto; max-width: 500px;">Contáctame y descubre cómo puedo ayudar a tu negocio.</p>
+            <p class="testimonials-cta-desc">Contáctame y descubre cómo puedo ayudar a tu negocio.</p>
             <a href="/contacto" class="btn btn-primary btn-lg">Agendar Consulta Gratis</a>
           </div>
         </div>
@@ -139,6 +139,20 @@ const testimonials = await prisma.testimonial.findMany({ where: { visible: true 
     text-align: center;
     padding: var(--space-16);
     color: var(--color-text-muted);
+  }
+
+  .testimonials-cta {
+    margin-top: var(--space-16);
+  }
+
+  .testimonials-cta-card {
+    text-align: center;
+    padding: var(--space-10);
+  }
+
+  .testimonials-cta-desc {
+    margin: var(--space-4) auto var(--space-6);
+    max-width: 500px;
   }
 
   @media (max-width: 640px) {

@@ -63,10 +63,10 @@ const plans = await prisma.plan.findMany({ orderBy: { order: 'asc' } });
                 <label class="form-label">Orden</label>
                 <input type="number" id="plan-order" class="form-input" value="0" />
               </div>
-              <div class="form-group" style="display:flex;align-items:end;">
-                <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+              <div class="form-group form-group-checkbox">
+                <label class="checkbox-label">
                   <input type="checkbox" id="plan-highlighted" />
-                  <span class="form-label" style="margin:0;">Destacado</span>
+                  <span class="checkbox-text">Destacado</span>
                 </label>
               </div>
             </div>
@@ -202,39 +202,6 @@ const plans = await prisma.plan.findMany({ orderBy: { order: 'asc' } });
   });
 </script>
 
-<style>
-  .admin-layout { display: flex; min-height: 100vh; }
-  .admin-sidebar { width: 250px; background: var(--color-primary); color: white; display: flex; flex-direction: column; padding: var(--space-6); position: fixed; top: 0; bottom: 0; left: 0; }
-  .sidebar-logo { display: flex; align-items: center; gap: var(--space-3); font-family: var(--font-heading); font-size: var(--text-xl); font-weight: 700; margin-bottom: var(--space-8); padding-bottom: var(--space-6); border-bottom: 1px solid rgba(255,255,255,0.1); }
-  .sidebar-nav { display: flex; flex-direction: column; gap: var(--space-1); flex: 1; }
-  .sidebar-link { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3) var(--space-4); color: rgba(255,255,255,0.7); font-size: var(--text-sm); font-weight: 500; border-radius: var(--radius-md); transition: all var(--transition-fast); text-decoration: none; }
-  .sidebar-link:hover, .sidebar-link.active { background: rgba(255,255,255,0.1); color: white; }
-  .sidebar-link.active { background: rgba(201,168,76,0.2); color: var(--color-accent); }
-  .badge-count { background: var(--color-error); color: white; font-size: 11px; padding: 1px 6px; border-radius: var(--radius-full); margin-left: auto; }
-  .sidebar-footer { border-top: 1px solid rgba(255,255,255,0.1); padding-top: var(--space-4); }
-  .admin-main { flex: 1; margin-left: 250px; padding: var(--space-8); background: var(--color-bg); }
-  .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-8); }
-  .admin-header h1 { font-size: var(--text-3xl); }
-
-  .admin-table-wrapper { background: var(--color-surface); border-radius: var(--radius-lg); border: 1px solid var(--color-border-light); overflow: hidden; }
-  .admin-table { width: 100%; border-collapse: collapse; }
-  .admin-table th { text-align: left; padding: var(--space-4); font-size: var(--text-sm); font-weight: 600; color: var(--color-text-muted); border-bottom: 1px solid var(--color-border-light); background: var(--color-bg-alt); }
-  .admin-table td { padding: var(--space-4); font-size: var(--text-sm); border-bottom: 1px solid var(--color-border-light); }
-  .actions-cell { display: flex; gap: var(--space-2); }
-  .btn-sm { padding: var(--space-1) var(--space-3); font-size: var(--text-xs); border: 1px solid var(--color-border); background: var(--color-surface); border-radius: var(--radius-sm); cursor: pointer; transition: all var(--transition-fast); }
-  .btn-sm:hover { background: var(--color-bg-alt); }
-  .btn-delete:hover { background: rgba(239,68,68,0.1); color: var(--color-error); border-color: var(--color-error); }
-  .empty-msg { text-align: center; padding: var(--space-10); color: var(--color-text-muted); }
-
-  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; }
-  .modal-card { background: var(--color-surface); border-radius: var(--radius-xl); padding: var(--space-8); width: 100%; max-width: 550px; max-height: 90vh; overflow-y: auto; }
-  .modal-card h2 { font-size: var(--text-2xl); margin-bottom: var(--space-6); }
-  .modal-card form { display: flex; flex-direction: column; gap: var(--space-4); }
-  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); }
-  .modal-actions { display: flex; gap: var(--space-3); justify-content: flex-end; margin-top: var(--space-4); }
-
-  @media (max-width: 768px) {
-    .admin-sidebar { display: none; }
-    .admin-main { margin-left: 0; }
-  }
+<style is:global>
+  @import '../../styles/admin.css';
 </style>

@@ -58,7 +58,7 @@ const messages = await prisma.message.findMany({ orderBy: { createdAt: 'desc' } 
               <div class="message-actions">
                 {!msg.read && <button class="btn-sm btn-mark-read" data-id={msg.id}>Marcar como leído</button>}
                 <a href={`mailto:${msg.email}?subject=Re: Consulta desde sitio web`} class="btn-sm">Responder por email</a>
-                <button class="btn-sm btn-delete-msg" data-id={msg.id} style="color: var(--color-error); border-color: rgba(239,68,68,0.3);">
+                <button class="btn-sm btn-delete-msg" data-id={msg.id}>
                   🗑️ Eliminar de raíz
                 </button>
               </div>
@@ -140,107 +140,6 @@ const messages = await prisma.message.findMany({ orderBy: { createdAt: 'desc' } 
   });
 </script>
 
-<style>
-  .admin-layout { display: flex; min-height: 100vh; }
-  .admin-sidebar { width: 250px; background: var(--color-primary); color: white; display: flex; flex-direction: column; padding: var(--space-6); position: fixed; top: 0; bottom: 0; left: 0; }
-  .sidebar-logo { display: flex; align-items: center; gap: var(--space-3); font-family: var(--font-heading); font-size: var(--text-xl); font-weight: 700; margin-bottom: var(--space-8); padding-bottom: var(--space-6); border-bottom: 1px solid rgba(255,255,255,0.1); }
-  .sidebar-nav { display: flex; flex-direction: column; gap: var(--space-1); flex: 1; }
-  .sidebar-link { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3) var(--space-4); color: rgba(255,255,255,0.7); font-size: var(--text-sm); font-weight: 500; border-radius: var(--radius-md); transition: all var(--transition-fast); text-decoration: none; }
-  .sidebar-link:hover, .sidebar-link.active { background: rgba(255,255,255,0.1); color: white; }
-  .sidebar-link.active { background: rgba(201,168,76,0.2); color: var(--color-accent); }
-  .badge-count { background: var(--color-error); color: white; font-size: 11px; padding: 1px 6px; border-radius: var(--radius-full); margin-left: auto; }
-  .sidebar-footer { border-top: 1px solid rgba(255,255,255,0.1); padding-top: var(--space-4); }
-  .admin-main { flex: 1; margin-left: 250px; padding: var(--space-8); background: var(--color-bg); }
-  .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-8); }
-  .admin-header h1 { font-size: var(--text-3xl); }
-  .msg-count { font-size: var(--text-sm); color: var(--color-text-muted); }
-
-  .messages-list { display: flex; flex-direction: column; gap: var(--space-4); }
-
-  .message-card {
-    background: var(--color-surface);
-    border: 1px solid var(--color-border-light);
-    border-radius: var(--radius-lg);
-    padding: var(--space-6);
-    transition: all var(--transition-fast);
-  }
-
-  .message-card.unread {
-    border-left: 3px solid var(--color-accent);
-    background: rgba(201,168,76,0.03);
-  }
-
-  .message-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: var(--space-4);
-  }
-
-  .message-sender {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-  }
-
-  .message-avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: var(--font-heading);
-    font-weight: 700;
-  }
-
-  .message-sender strong {
-    display: block;
-    font-size: var(--text-base);
-    color: var(--color-text);
-  }
-
-  .message-email {
-    font-size: var(--text-sm);
-    color: var(--color-text-muted);
-  }
-
-  .message-meta {
-    display: flex;
-    align-items: center;
-    gap: var(--space-3);
-  }
-
-  .message-date {
-    font-size: var(--text-xs);
-    color: var(--color-text-light);
-  }
-
-  .message-phone, .message-service {
-    font-size: var(--text-sm);
-    color: var(--color-text-muted);
-    margin-bottom: var(--space-2);
-  }
-
-  .message-text {
-    font-size: var(--text-base);
-    color: var(--color-text);
-    line-height: 1.7;
-    margin: var(--space-4) 0;
-    padding: var(--space-4);
-    background: var(--color-bg-alt);
-    border-radius: var(--radius-md);
-  }
-
-  .message-actions {
-    display: flex;
-    gap: var(--space-2);
-  }
-
-  .btn-sm { padding: var(--space-1) var(--space-3); font-size: var(--text-xs); border: 1px solid var(--color-border); background: var(--color-surface); border-radius: var(--radius-sm); cursor: pointer; transition: all var(--transition-fast); text-decoration: none; color: var(--color-text); }
-  .btn-sm:hover { background: var(--color-bg-alt); }
-  .btn-mark-read:hover { background: rgba(201,168,76,0.1); border-color: var(--color-accent); }
-  .empty-msg { text-align: center; padding: var(--space-16); color: var(--color-text-muted); background: var(--color-surface); border-radius: var(--radius-lg); border: 1px solid var(--color-border-light); }
+<style is:global>
+  @import '../../styles/admin.css';
 </style>

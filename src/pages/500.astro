@@ -1,4 +1,4 @@
-﻿---
+---
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
@@ -26,8 +26,8 @@ import WhatsAppButton from '../components/WhatsAppButton.astro';
         Por favor intenta nuevamente en unos momentos.
       </p>
       <div class="error-actions">
-        <a href="/" class="btn-primary" id="btn-500-inicio">Volver al Inicio</a>
-        <a href="/contacto" class="btn-secondary" id="btn-500-contacto">Contactar</a>
+        <a href="/" class="btn btn-primary btn-lg" id="btn-500-inicio">Volver al Inicio</a>
+        <a href="/contacto" class="btn btn-secondary btn-lg" id="btn-500-contacto">Contactar</a>
       </div>
       <p class="error-hint">
         Si el problema persiste, contáctanos directamente a<br />
@@ -61,7 +61,7 @@ import WhatsAppButton from '../components/WhatsAppButton.astro';
     font-size: clamp(5rem, 15vw, 8rem);
     font-weight: 900;
     line-height: 1;
-    background: linear-gradient(135deg, #7b1d2a 0%, #c9a84c 100%);
+    background: linear-gradient(135deg, var(--color-error) 0%, var(--color-accent) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -72,20 +72,20 @@ import WhatsAppButton from '../components/WhatsAppButton.astro';
     width: 70px;
     height: 70px;
     margin: 0 auto 1.5rem;
-    color: #7b1d2a;
+    color: var(--color-error);
     opacity: 0.5;
   }
   .error-icon svg { width: 100%; height: 100%; }
   .error-title {
     font-size: clamp(1.4rem, 4vw, 1.9rem);
     font-weight: 700;
-    color: #1a2e5a;
+    color: var(--color-primary);
     margin-bottom: 1rem;
     line-height: 1.3;
   }
   .error-description {
     font-size: 1.05rem;
-    color: #4a5568;
+    color: var(--color-text-muted);
     line-height: 1.7;
     margin-bottom: 2.5rem;
   }
@@ -96,44 +96,13 @@ import WhatsAppButton from '../components/WhatsAppButton.astro';
     flex-wrap: wrap;
     margin-bottom: 2rem;
   }
-  .btn-primary, .btn-secondary {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.85rem 1.8rem;
-    border-radius: 50px;
-    font-weight: 600;
-    font-size: 0.95rem;
-    text-decoration: none;
-    transition: all 0.25s ease;
-  }
-  .btn-primary {
-    background: #1a2e5a;
-    color: #fff;
-    box-shadow: 0 4px 15px rgba(26,46,90,0.3);
-  }
-  .btn-primary:hover {
-    background: #c9a84c;
-    box-shadow: 0 6px 20px rgba(201,168,76,0.35);
-    transform: translateY(-2px);
-  }
-  .btn-secondary {
-    background: transparent;
-    color: #1a2e5a;
-    border: 2px solid #1a2e5a;
-  }
-  .btn-secondary:hover {
-    background: #1a2e5a;
-    color: #fff;
-    transform: translateY(-2px);
-  }
   .error-hint {
     font-size: 0.9rem;
-    color: #718096;
+    color: var(--color-text-light);
     line-height: 1.6;
   }
   .error-hint a {
-    color: #c9a84c;
+    color: var(--color-accent-dark);
     font-weight: 500;
     text-decoration: none;
   }

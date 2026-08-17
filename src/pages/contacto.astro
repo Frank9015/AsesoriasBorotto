@@ -27,7 +27,7 @@ const services = await prisma.service.findMany({ orderBy: { order: 'asc' } });
           <!-- Formulario -->
           <div class="contact-form-wrapper reveal-left">
             <h2>Envíame un mensaje</h2>
-            <p style="margin-bottom: var(--space-6);">Completa el formulario indicando tu plan o servicio de interés y te responderé a la brevedad.</p>
+            <p class="contact-intro">Completa el formulario indicando tu plan o servicio de interés y te responderé a la brevedad.</p>
 
             <form id="contact-form" class="contact-form">
               <div class="form-row">
@@ -51,11 +51,14 @@ const services = await prisma.service.findMany({ orderBy: { order: 'asc' } });
                     <option value="">Seleccionar motivo de contacto...</option>
                     
                     <optgroup label="📋 Cotizar un Plan Mensual (UF)">
-                      {plans.map((p) => (
-                        <option value={`Plan: ${p.name} (${p.price})`}>
-                          Plan {p.name} ({p.price})
-                        </option>
-                      ))}
+                      {plans.map((p) => {
+                        const displayName = p.name.startsWith('Plan') ? p.name : `Plan ${p.name}`;
+                        return (
+                          <option value={`Plan: ${p.name} (${p.price})`}>
+                            {displayName} ({p.price})
+                          </option>
+                        );
+                      })}
                       <option value="Plan Personalizado / Cotización a Medida">✨ Plan Personalizado / Cotización a Medida</option>
                     </optgroup>
 
@@ -79,16 +82,16 @@ const services = await prisma.service.findMany({ orderBy: { order: 'asc' } });
                 <label class="form-label" for="message">Mensaje *</label>
                 <textarea id="message" name="message" class="form-textarea" required placeholder="Cuéntame sobre tu negocio, tus dudas o lo que necesitas..."></textarea>
               </div>
-              <div class="form-group" style="margin-bottom: var(--space-4);">
-                <label style="display: flex; align-items: flex-start; gap: 10px; cursor: pointer; font-size: var(--text-xs); color: var(--color-text-muted); line-height: 1.5;">
-                  <input type="checkbox" id="privacy-consent" name="privacy-consent" required style="margin-top: 3px; accent-color: var(--color-accent);" />
-                  <span>He leído y acepto la <a href="/politica-de-privacidad" target="_blank" style="color: var(--color-accent); text-decoration: underline;">Política de Privacidad</a> y el tratamiento confidencial de mis datos personales. *</span>
+              <div class="form-group privacy-consent-group">
+                <label class="privacy-consent-label">
+                  <input type="checkbox" id="privacy-consent" name="privacy-consent" required class="privacy-consent-checkbox" />
+                  <span>He leído y acepto la <a href="/politica-de-privacidad" target="_blank" class="privacy-consent-link">Política de Privacidad</a> y el tratamiento confidencial de mis datos personales. *</span>
                 </label>
               </div>
               <button type="submit" class="btn btn-primary btn-lg w-full" id="submit-btn">
                 Enviar Mensaje
               </button>
-              <div id="form-status" class="form-status" style="display:none;"></div>
+              <div id="form-status" class="form-status"></div>
             </form>
           </div>
 
@@ -135,10 +138,10 @@ const services = await prisma.service.findMany({ orderBy: { order: 'asc' } });
               </ul>
             </div>
 
-            <div class="card-glass info-card" style="margin-top: var(--space-6); text-align: center;">
+            <div class="card-glass info-card contact-whatsapp-card">
               <h3>¿Prefieres WhatsApp?</h3>
-              <p style="margin: var(--space-3) 0 var(--space-4);">Escríbeme directamente y te respondo a la brevedad.</p>
-              <a href="https://wa.me/56973764841?text=Hola!%20Me%20interesa%20conocer%20m%C3%A1s%20sobre%20tus%20servicios." target="_blank" rel="noopener" class="btn btn-primary" style="background: #25D366; border-color: #25D366;">
+              <p class="contact-whatsapp-text">Escríbeme directamente y te respondo a la brevedad.</p>
+              <a href="https://wa.me/56973764841?text=Hola!%20Me%20interesa%20conocer%20m%C3%A1s%20sobre%20tus%20servicios." target="_blank" rel="noopener noreferrer" class="btn btn-whatsapp">
                 Abrir WhatsApp
               </a>
             </div>
@@ -175,7 +178,8 @@ const services = await prisma.service.findMany({ orderBy: { order: 'asc' } });
           selectElem.value = 'Plan Personalizado / Cotización a Medida';
         }
         if (messageElem && !messageElem.value) {
-          messageElem.value = `Hola Rossana, me gustaría solicitar información y cotización sobre el Plan ${planParam}.`;
+          const cleanPlanName = planParam.startsWith('Plan') ? planParam : `Plan ${planParam}`;
+          messageElem.value = `Hola Rossana, me gustaría solicitar información y cotización sobre el ${cleanPlanName}.`;
         }
       } else if (servicioParam) {
         const found = options.find(opt => opt.value.toLowerCase().includes(servicioParam.toLowerCase()));
@@ -272,7 +276,57 @@ const services = await prisma.service.findMany({ orderBy: { order: 'asc' } });
     gap: var(--space-5);
   }
 
+  .contact-intro {
+    margin-bottom: var(--space-6);
+  }
+
+  .privacy-consent-group {
+    margin-bottom: var(--space-4);
+  }
+
+  .privacy-consent-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    cursor: pointer;
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    line-height: 1.5;
+  }
+
+  .privacy-consent-checkbox {
+    margin-top: 3px;
+    accent-color: var(--color-accent);
+  }
+
+  .privacy-consent-link {
+    color: var(--color-accent);
+    text-decoration: underline;
+  }
+
+  .contact-whatsapp-card {
+    margin-top: var(--space-6);
+    text-align: center;
+  }
+
+  .contact-whatsapp-text {
+    margin: var(--space-3) 0 var(--space-4);
+  }
+
+  .btn-whatsapp {
+    background: #25D366;
+    border-color: #25D366;
+    color: white;
+  }
+
+  .btn-whatsapp:hover {
+    background: #1eb956;
+    border-color: #1eb956;
+    color: white;
+  }
+
   .form-status {
+    display: none;
     padding: var(--space-4);
     border-radius: var(--radius-md);
     font-size: var(--text-sm);

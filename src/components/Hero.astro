@@ -2,8 +2,8 @@
 interface Props {
   title: string;
   subtitle: string;
-  ctaPrimary?: { text: string; href: string };
-  ctaSecondary?: { text: string; href: string };
+  ctaPrimary?: { text: string; href: string; target?: string; rel?: string };
+  ctaSecondary?: { text: string; href: string; target?: string; rel?: string };
   compact?: boolean;
   image?: string;
   imageAlt?: string;
@@ -45,8 +45,8 @@ const {
           <p class="hero-subtitle">{subtitle}</p>
           
           <div class="hero-ctas">
-            <a href={ctaPrimary.href} class="btn btn-primary btn-lg">{ctaPrimary.text}</a>
-            <a href={ctaSecondary.href} class="btn btn-secondary btn-lg">{ctaSecondary.text}</a>
+            <a href={ctaPrimary.href} target={ctaPrimary.target} rel={ctaPrimary.target === '_blank' ? (ctaPrimary.rel || 'noopener noreferrer') : ctaPrimary.rel} class="btn btn-primary btn-lg">{ctaPrimary.text}</a>
+            <a href={ctaSecondary.href} target={ctaSecondary.target} rel={ctaSecondary.target === '_blank' ? (ctaSecondary.rel || 'noopener noreferrer') : ctaSecondary.rel} class="btn btn-secondary btn-lg">{ctaSecondary.text}</a>
           </div>
 
           <div class="hero-trust-badges">
@@ -107,8 +107,8 @@ const {
         <h1 class="hero-title" set:html={title} />
         <p class="hero-subtitle">{subtitle}</p>
         <div class="hero-ctas">
-          <a href={ctaPrimary.href} class="btn btn-primary btn-lg">{ctaPrimary.text}</a>
-          <a href={ctaSecondary.href} class="btn btn-secondary btn-lg">{ctaSecondary.text}</a>
+          <a href={ctaPrimary.href} target={ctaPrimary.target} rel={ctaPrimary.target === '_blank' ? (ctaPrimary.rel || 'noopener noreferrer') : ctaPrimary.rel} class="btn btn-primary btn-lg">{ctaPrimary.text}</a>
+          <a href={ctaSecondary.href} target={ctaSecondary.target} rel={ctaSecondary.target === '_blank' ? (ctaSecondary.rel || 'noopener noreferrer') : ctaSecondary.rel} class="btn btn-secondary btn-lg">{ctaSecondary.text}</a>
         </div>
       </div>
     )}
@@ -195,6 +195,10 @@ const {
     margin-inline: auto;
     text-align: center;
     animation: fadeInUp 0.8s ease both;
+  }
+
+  .hero-content .hero-subtitle {
+    margin-inline: auto;
   }
 
   /* Split mode (2 Columns) */

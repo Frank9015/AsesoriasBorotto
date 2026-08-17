@@ -77,6 +77,12 @@ ul, ol {
   --color-error: #ef4444;
   --color-warning: #f59e0b;
 
+  /* Gradientes */
+  --gradient-primary: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
+  --gradient-accent: linear-gradient(135deg, var(--color-accent), var(--color-accent-dark));
+  --gradient-accent-hover: linear-gradient(135deg, var(--color-accent-light), var(--color-accent));
+  --gradient-gold-bar: linear-gradient(90deg, #c9a84c 0%, #dfc374 50%, #c9a84c 100%);
+
   /* Glassmorphism */
   --glass-bg: rgba(255, 255, 255, 0.72);
   --glass-bg-dark: rgba(26, 39, 68, 0.85);

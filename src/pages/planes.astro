@@ -48,10 +48,10 @@ const plans = await prisma.plan.findMany({ orderBy: { order: 'asc' } });
           ))}
         </div>
 
-        <div class="custom-plan reveal" style="margin-top: var(--space-16);">
-          <div class="card-glass" style="text-align: center; padding: var(--space-10);">
+        <div class="custom-plan reveal">
+          <div class="card-glass custom-plan-card">
             <h3>¿No encuentras lo que buscas?</h3>
-            <p style="margin: var(--space-4) auto; max-width: 500px;">Puedo crear un plan personalizado para las necesidades específicas de tu negocio. Conversemos.</p>
+            <p class="custom-plan-desc">Puedo crear un plan personalizado para las necesidades específicas de tu negocio. Conversemos.</p>
             <a href="/contacto" class="btn btn-primary">Solicitar Plan Personalizado</a>
           </div>
         </div>
@@ -100,13 +100,27 @@ const plans = await prisma.plan.findMany({ orderBy: { order: 'asc' } });
   .plans-grid > div {
     flex: 1 1 calc(33.333% - var(--space-6));
     max-width: calc(33.333% - var(--space-6));
-    min-width: 310px;
+    min-width: 300px;
     display: flex;
   }
 
   .plans-grid > div > :global(*) {
     width: 100%;
     height: 100%;
+  }
+
+  .custom-plan {
+    margin-top: var(--space-16);
+  }
+
+  .custom-plan-card {
+    text-align: center;
+    padding: var(--space-10);
+  }
+
+  .custom-plan-desc {
+    margin: var(--space-4) auto;
+    max-width: 500px;
   }
 
   @media (max-width: 1024px) {

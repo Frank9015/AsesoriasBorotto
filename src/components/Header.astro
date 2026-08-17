@@ -58,7 +58,7 @@ const navLinks = [
       </li>
     ))}
   </ul>
-  <a href="/contacto" class="btn btn-primary btn-lg w-full" style="margin-top: var(--space-6); text-align: center;">
+  <a href="/contacto" class="btn btn-primary btn-lg w-full mobile-menu-cta">
     Consulta Gratis
   </a>
 </div>
@@ -67,10 +67,8 @@ const navLinks = [
   const header = document.getElementById('main-header')!;
   const hamburger = document.getElementById('hamburger')!;
   const mobileMenu = document.getElementById('mobile-menu')!;
-  const navLinks = document.getElementById('nav-links')!;
 
   // Scroll effect — glassmorphism on scroll
-  let lastScroll = 0;
   window.addEventListener('scroll', () => {
     const currentScroll = window.scrollY;
     if (currentScroll > 50) {
@@ -78,7 +76,6 @@ const navLinks = [
     } else {
       header.classList.remove('scrolled');
     }
-    lastScroll = currentScroll;
   });
 
   // Mobile menu toggle
@@ -251,15 +248,17 @@ const navLinks = [
     border-left: 3px solid var(--color-accent);
   }
 
+  .mobile-menu-cta {
+    margin-top: var(--space-6);
+    text-align: center;
+  }
+
   @media (max-width: 900px) {
     .nav-links {
       display: none;
     }
     .hamburger {
       display: flex;
-    }
-    .hide-mobile {
-      display: none !important;
     }
   }
 </style>
