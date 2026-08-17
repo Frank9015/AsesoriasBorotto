@@ -1,4 +1,12 @@
 ---
+import { prisma } from '../lib/prisma';
+
+interface Props {
+  services?: { id?: number; name: string }[];
+}
+
+const { services: propServices } = Astro.props;
+
 const year = new Date().getFullYear();
 
 const navLinks = [
@@ -9,6 +17,19 @@ const navLinks = [
   { href: '/testimonios', label: 'Testimonios' },
   { href: '/contacto', label: 'Contacto' },
 ];
+
+let services = propServices;
+if (!services) {
+  try {
+    services = await prisma.service.findMany({
+      select: { id: true, name: true },
+      orderBy: { order: 'asc' },
+    });
+  } catch (error) {
+    console.error('Error loading services in Footer:', error);
+    services = [];
+  }
+}
 ---
 
 <footer class="footer" id="main-footer">
@@ -46,11 +67,9 @@ const navLinks = [
         <div class="footer-section">
           <h4 class="footer-title">Servicios</h4>
           <ul class="footer-links">
-            <li><a href="/servicios">Declaración de Impuestos</a></li>
-            <li><a href="/servicios">Contabilidad Completa</a></li>
-            <li><a href="/servicios">Remuneraciones</a></li>
-            <li><a href="/servicios">Asesoría Tributaria</a></li>
-            <li><a href="/servicios">Auditoría Financiera</a></li>
+            {services.map((service) => (
+              <li><a href="/servicios">{service.name}</a></li>
+            ))}
           </ul>
         </div>
 
