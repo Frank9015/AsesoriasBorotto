@@ -60,3 +60,9 @@ model ReviewToken {
   used      Boolean  @default(false)
   createdAt DateTime @default(now())
 }
+
+model AdminSession {
+  id        String   @id @default(uuid())
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}

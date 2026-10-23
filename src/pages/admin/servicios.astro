@@ -1,9 +1,10 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import { prisma } from '../../lib/prisma';
+import { validateAdminSession, ADMIN_SESSION_COOKIE } from '../../lib/auth';
 
-const authCookie = Astro.cookies.get('admin_auth')?.value;
-if (authCookie !== (import.meta.env.ADMIN_PASSWORD || 'admin123')) {
+const sessionId = Astro.cookies.get(ADMIN_SESSION_COOKIE)?.value;
+if (!(await validateAdminSession(sessionId))) {
   return Astro.redirect('/admin');
 }
 
@@ -104,7 +105,7 @@ const lucideIcons = ['file-text', 'calculator', 'users', 'rocket', 'shield-check
   const modal = document.getElementById('modal')!;
   const form = document.getElementById('service-form') as HTMLFormElement;
   const modalTitle = document.getElementById('modal-title')!;
-  const authToken = document.cookie.split(';').find(c => c.trim().startsWith('admin_auth='))?.split('=')[1] || '';
+  // La autenticación se verifica en el servidor con la cookie HttpOnly.
 
   document.getElementById('add-btn')!.addEventListener('click', () => { modalTitle.textContent = 'Nuevo Servicio'; form.reset(); (document.getElementById('service-id') as HTMLInputElement).value = ''; (document.getElementById('service-features') as HTMLTextAreaElement).value = ''; modal.style.display = 'flex'; });
   document.getElementById('cancel-btn')!.addEventListener('click', () => { modal.style.display = 'none'; });
@@ -128,7 +129,7 @@ const lucideIcons = ['file-text', 'calculator', 'users', 'rocket', 'shield-check
     btn.addEventListener('click', async () => {
       const result = await Swal.fire({ title: '¿Eliminar este servicio?', text: 'Esta acción no se puede deshacer.', icon: 'warning', showCancelButton: true, confirmButtonColor: '#ef4444', cancelButtonColor: '#6b7280', confirmButtonText: 'Sí, eliminar', cancelButtonText: 'Cancelar' });
       if (!result.isConfirmed) return;
-      const res = await fetch('/api/servicios', { method: 'DELETE', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` }, body: JSON.stringify({ id: Number((btn as HTMLElement).dataset.id) }) });
+      const res = await fetch('/api/servicios', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: Number((btn as HTMLElement).dataset.id) }) });
       if (res.ok) { await Swal.fire({ title: '¡Eliminado!', text: 'Servicio eliminado correctamente.', icon: 'success', confirmButtonColor: '#c9a84c', timer: 1500, showConfirmButton: false }); }
       else { await Swal.fire({ title: 'Error', text: 'No se pudo eliminar.', icon: 'error', confirmButtonColor: '#c9a84c' }); }
       window.location.reload();
@@ -147,7 +148,7 @@ const lucideIcons = ['file-text', 'calculator', 'users', 'rocket', 'shield-check
       icon: (document.getElementById('service-icon') as HTMLSelectElement).value,
       order: Number((document.getElementById('service-order') as HTMLInputElement).value)
     };
-    const res = await fetch('/api/servicios', { method: id ? 'PUT' : 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` }, body: JSON.stringify(data) });
+    const res = await fetch('/api/servicios', { method: id ? 'PUT' : 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
     if (res.ok) { await Swal.fire({ title: id ? '¡Actualizado!' : '¡Creado!', text: `Servicio ${id ? 'actualizado' : 'creado'} correctamente.`, icon: 'success', confirmButtonColor: '#c9a84c', timer: 1500, showConfirmButton: false }); }
     else { await Swal.fire({ title: 'Error', text: 'Hubo un problema al guardar.', icon: 'error', confirmButtonColor: '#c9a84c' }); }
     window.location.reload();

@@ -1,19 +1,28 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { prisma } from '../../lib/prisma';
+import { validateAdminSession, ADMIN_SESSION_COOKIE } from '../../lib/auth';
 
-// Auth check básica via cookie
-const authCookie = Astro.cookies.get('admin_auth')?.value;
-if (authCookie !== (import.meta.env.ADMIN_PASSWORD || 'admin123')) {
-  // Si no está autenticado, mostrar login
+// 1. Validar sesión ANTES de cualquier query a la BD
+const sessionId = Astro.cookies.get(ADMIN_SESSION_COOKIE)?.value;
+const isAuthenticated = await validateAdminSession(sessionId);
+
+// 2. SOLO si está autenticado, ejecutar queries
+let totalPlans = 0;
+let totalServices = 0;
+let totalTestimonials = 0;
+let totalMessages = 0;
+let unreadMessages = 0;
+
+if (isAuthenticated) {
+  const { prisma } = await import('../../lib/prisma');
+  [totalPlans, totalServices, totalTestimonials, totalMessages, unreadMessages] = await Promise.all([
+    prisma.plan.count(),
+    prisma.service.count(),
+    prisma.testimonial.count(),
+    prisma.message.count(),
+    prisma.message.count({ where: { read: false } }),
+  ]);
 }
-const isAuthenticated = authCookie === (import.meta.env.ADMIN_PASSWORD || 'admin123');
-
-const totalPlans = await prisma.plan.count();
-const totalServices = await prisma.service.count();
-const totalTestimonials = await prisma.testimonial.count();
-const totalMessages = await prisma.message.count();
-const unreadMessages = await prisma.message.count({ where: { read: false } });
 ---
 
 <Layout title="Panel Admin | Asesorías Borotto">
@@ -30,7 +39,7 @@ const unreadMessages = await prisma.message.count({ where: { read: false } });
         <p>Ingresa la contraseña para acceder</p>
         <form id="login-form">
           <div class="form-group">
-            <input type="password" id="admin-password" class="form-input" placeholder="Contraseña" required autofocus />
+            <input type="password" id="admin-password" class="form-input" placeholder="Contraseña" required autofocus autocomplete="current-password" />
           </div>
           <button type="submit" class="btn btn-primary w-full">Entrar</button>
           <p id="login-error" class="login-error" style="display:none;">Contraseña incorrecta</p>
@@ -153,16 +162,41 @@ const unreadMessages = await prisma.message.count({ where: { read: false } });
 </Layout>
 
 <script>
-  // Login
+  // Login — envía la contraseña al servidor vía API, nunca la guarda en cookie
   const loginForm = document.getElementById('login-form') as HTMLFormElement | null;
-  loginForm?.addEventListener('submit', (e) => {
+  loginForm?.addEventListener('submit', async (e) => {
     e.preventDefault();
     const pw = (document.getElementById('admin-password') as HTMLInputElement).value;
-    document.cookie = `admin_auth=${pw}; path=/; SameSite=Strict`;
-    window.location.reload();
+    const errorEl = document.getElementById('login-error') as HTMLElement;
+    const btn = loginForm.querySelector('button[type="submit"]') as HTMLButtonElement;
+
+    btn.disabled = true;
+    btn.textContent = 'Verificando...';
+    errorEl.style.display = 'none';
+
+    try {
+      const res = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: pw }),
+      });
+
+      if (res.ok) {
+        window.location.reload();
+      } else {
+        errorEl.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = 'Entrar';
+      }
+    } catch {
+      errorEl.textContent = 'Error de conexión. Intenta de nuevo.';
+      errorEl.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Entrar';
+    }
   });
 
-  // Logout con SweetAlert2
+  // Logout — invalida sesión en el servidor
   document.getElementById('logout-btn')?.addEventListener('click', () => {
     Swal.fire({
       title: '¿Cerrar sesión?',
@@ -173,9 +207,9 @@ const unreadMessages = await prisma.message.count({ where: { read: false } });
       cancelButtonColor: '#6b7280',
       confirmButtonText: 'Sí, cerrar sesión',
       cancelButtonText: 'Cancelar',
-    }).then((result: any) => {
+    }).then(async (result: any) => {
       if (result.isConfirmed) {
-        document.cookie = 'admin_auth=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+        await fetch('/api/logout', { method: 'POST' });
         window.location.href = '/admin';
       }
     });

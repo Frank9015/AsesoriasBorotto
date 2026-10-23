@@ -1,9 +1,11 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import { prisma } from '../../lib/prisma';
+import { validateAdminSession, ADMIN_SESSION_COOKIE } from '../../lib/auth';
 
-const authCookie = Astro.cookies.get('admin_auth')?.value;
-if (authCookie !== (import.meta.env.ADMIN_PASSWORD || 'admin123')) {
+// Validar sesión ANTES de cualquier query
+const sessionId = Astro.cookies.get(ADMIN_SESSION_COOKIE)?.value;
+if (!(await validateAdminSession(sessionId))) {
   return Astro.redirect('/admin');
 }
 
@@ -71,7 +73,8 @@ const messages = await prisma.message.findMany({ orderBy: { createdAt: 'desc' } 
 </Layout>
 
 <script>
-  const authToken = document.cookie.split(';').find(c => c.trim().startsWith('admin_auth='))?.split('=')[1] || '';
+  // La autenticación se verifica en el servidor con la cookie HttpOnly.
+  // Las APIs admin usan la sesión automáticamente (cookie se envía con cada fetch).
 
   // Marcar como leído
   document.querySelectorAll('.btn-mark-read').forEach(btn => {
@@ -79,7 +82,7 @@ const messages = await prisma.message.findMany({ orderBy: { createdAt: 'desc' } 
       const id = Number((btn as HTMLElement).dataset.id);
       await fetch('/api/contacto', {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id, read: true }),
       });
       window.location.reload();
@@ -107,7 +110,7 @@ const messages = await prisma.message.findMany({ orderBy: { createdAt: 'desc' } 
       try {
         const res = await fetch('/api/contacto', {
           method: 'DELETE',
-          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ id }),
         });
 

@@ -1,9 +1,10 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import { prisma } from '../../lib/prisma';
+import { validateAdminSession, ADMIN_SESSION_COOKIE } from '../../lib/auth';
 
-const authCookie = Astro.cookies.get('admin_auth')?.value;
-if (authCookie !== (import.meta.env.ADMIN_PASSWORD || 'admin123')) {
+const sessionId = Astro.cookies.get(ADMIN_SESSION_COOKIE)?.value;
+if (!(await validateAdminSession(sessionId))) {
   return Astro.redirect('/admin');
 }
 
@@ -117,7 +118,7 @@ const plans = await prisma.plan.findMany({ orderBy: { order: 'asc' } });
   const modal = document.getElementById('modal')!;
   const form = document.getElementById('plan-form') as HTMLFormElement;
   const modalTitle = document.getElementById('modal-title')!;
-  const authToken = document.cookie.split(';').find(c => c.trim().startsWith('admin_auth='))?.split('=')[1] || '';
+  // La autenticación se verifica en el servidor con la cookie HttpOnly.
 
   document.getElementById('add-btn')!.addEventListener('click', () => {
     modalTitle.textContent = 'Nuevo Plan';
@@ -163,7 +164,7 @@ const plans = await prisma.plan.findMany({ orderBy: { order: 'asc' } });
       const id = Number((btn as HTMLElement).dataset.id);
       const res = await fetch('/api/planes', {
         method: 'DELETE',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id }),
       });
       if (res.ok) {
@@ -190,7 +191,7 @@ const plans = await prisma.plan.findMany({ orderBy: { order: 'asc' } });
     };
     const res = await fetch('/api/planes', {
       method: id ? 'PUT' : 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
     });
     if (res.ok) {

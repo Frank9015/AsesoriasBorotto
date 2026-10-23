@@ -1,9 +1,10 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import { prisma } from '../../lib/prisma';
+import { validateAdminSession, ADMIN_SESSION_COOKIE } from '../../lib/auth';
 
-const authCookie = Astro.cookies.get('admin_auth')?.value;
-if (authCookie !== (import.meta.env.ADMIN_PASSWORD || 'admin123')) {
+const sessionId = Astro.cookies.get(ADMIN_SESSION_COOKIE)?.value;
+if (!(await validateAdminSession(sessionId))) {
   return Astro.redirect('/admin');
 }
 
@@ -106,7 +107,7 @@ const testimonials = await prisma.testimonial.findMany({ orderBy: { createdAt: '
   const modal = document.getElementById('modal')!;
   const form = document.getElementById('item-form') as HTMLFormElement;
   const modalTitle = document.getElementById('modal-title')!;
-  const authToken = document.cookie.split(';').find(c => c.trim().startsWith('admin_auth='))?.split('=')[1] || '';
+  // La autenticación se verifica en el servidor con la cookie HttpOnly.
 
   document.getElementById('add-btn')!.addEventListener('click', () => { modalTitle.textContent = 'Nuevo Testimonio'; form.reset(); (document.getElementById('item-id') as HTMLInputElement).value = ''; (document.getElementById('item-visible') as HTMLInputElement).checked = true; modal.style.display = 'flex'; });
   document.getElementById('cancel-btn')!.addEventListener('click', () => { modal.style.display = 'none'; });
@@ -130,7 +131,7 @@ const testimonials = await prisma.testimonial.findMany({ orderBy: { createdAt: '
     btn.addEventListener('click', async () => {
       const result = await Swal.fire({ title: '¿Eliminar este testimonio?', text: 'Esta acción no se puede deshacer.', icon: 'warning', showCancelButton: true, confirmButtonColor: '#ef4444', cancelButtonColor: '#6b7280', confirmButtonText: 'Sí, eliminar', cancelButtonText: 'Cancelar' });
       if (!result.isConfirmed) return;
-      const res = await fetch('/api/testimonios', { method: 'DELETE', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` }, body: JSON.stringify({ id: Number((btn as HTMLElement).dataset.id) }) });
+      const res = await fetch('/api/testimonios', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: Number((btn as HTMLElement).dataset.id) }) });
       if (res.ok) { await Swal.fire({ title: '¡Eliminado!', text: 'Testimonio eliminado correctamente.', icon: 'success', confirmButtonColor: '#c9a84c', timer: 1500, showConfirmButton: false }); }
       else { await Swal.fire({ title: 'Error', text: 'No se pudo eliminar.', icon: 'error', confirmButtonColor: '#c9a84c' }); }
       window.location.reload();
@@ -141,7 +142,7 @@ const testimonials = await prisma.testimonial.findMany({ orderBy: { createdAt: '
     e.preventDefault();
     const id = (document.getElementById('item-id') as HTMLInputElement).value;
     const data = { id: id ? Number(id) : undefined, name: (document.getElementById('item-name') as HTMLInputElement).value, company: (document.getElementById('item-company') as HTMLInputElement).value || null, role: (document.getElementById('item-role') as HTMLInputElement).value || null, text: (document.getElementById('item-text') as HTMLTextAreaElement).value, rating: Number((document.getElementById('item-rating') as HTMLInputElement).value), visible: (document.getElementById('item-visible') as HTMLInputElement).checked };
-    const res = await fetch('/api/testimonios', { method: id ? 'PUT' : 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` }, body: JSON.stringify(data) });
+    const res = await fetch('/api/testimonios', { method: id ? 'PUT' : 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
     if (res.ok) { await Swal.fire({ title: id ? '¡Actualizado!' : '¡Creado!', text: `Testimonio ${id ? 'actualizado' : 'creado'} correctamente.`, icon: 'success', confirmButtonColor: '#c9a84c', timer: 1500, showConfirmButton: false }); }
     else { await Swal.fire({ title: 'Error', text: 'Hubo un problema al guardar.', icon: 'error', confirmButtonColor: '#c9a84c' }); }
     window.location.reload();
@@ -153,7 +154,6 @@ const testimonials = await prisma.testimonial.findMany({ orderBy: { createdAt: '
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${authToken}`
         }
       });
       const data = await res.json();
